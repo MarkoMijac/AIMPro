@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "coreclr",
+        "request": "launch",
+        "name": "Launch AIMCore",
+        "program": "${workspaceFolder}/AIMCore/bin/Debug/net8.0/AIMCore.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/AIMCore",
+        "stopAtEntry": false,
+        "console": "internalConsole"
+      },
+      {
+        "type": "coreclr",
+        "request": "launch",
+        "name": "Launch AvaloniaGUI",
+        "program": "${workspaceFolder}/AvaloniaGUI/bin/Debug/net8.0/AvaloniaGUI.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/AvaloniaGUI",
+        "stopAtEntry": false,
+        "console": "internalConsole"
+      }
+    ]
+  }
+  
