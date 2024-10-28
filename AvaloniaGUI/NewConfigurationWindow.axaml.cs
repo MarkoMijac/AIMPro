@@ -44,7 +44,7 @@ public partial class NewConfigurationWindow : Window
 
     private void BtnSave_Click(object sender, RoutedEventArgs e)
     {
-
+        
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)
