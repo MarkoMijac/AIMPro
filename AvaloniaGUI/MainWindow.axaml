@@ -4,6 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="AvaloniaGUI.MainWindow"
-        Title="AvaloniaGUI">
-    Welcome to Avalonia!
+        Title="AIM (AI powered Measurement Instrument)" Width="450" Height="600">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+            <Button x:Name="btnNewConfiguration" Content="Create new Configuration..." Margin="5" Click="btnNewConfiguration_Click"/>
+            <Button Content="Load existing Configuration..." Margin="5"/>
+        </StackPanel>
 </Window>

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace AvaloniaGUI;
 
@@ -8,4 +9,11 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
+
+    private void btnNewConfiguration_Click(object sender, RoutedEventArgs e)
+    {
+        var newConfigurationWindow = new NewConfigurationWindow();
+        newConfigurationWindow.Show();
+    }
+
 }

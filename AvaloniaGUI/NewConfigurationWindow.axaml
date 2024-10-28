@@ -1,0 +1,69 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaGUI.NewConfigurationWindow"
+        Title="Create new configuration..." Width="450" Height="600">
+
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!--CONFIGURATION NAME-->
+            <Label Content="CONFIGURATION INFO" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
+
+            <Label Content="Configuration name:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBox x:Name="txtConfigurationName" Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" IsReadOnly="false"/>
+
+            <!--INSTRUMENT SECTION-->
+            <Label Content="CONFIGURE INSTRUMENT" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
+
+            <Label Content="Instrument name:" Grid.Row="3" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBox x:Name="txtInstrumentName" Grid.Row="3" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" IsReadOnly="True"/>
+            
+            <Button x:Name="btnAddInstrument" Content="Add" Width="150" Grid.Row="4" Grid.Column="0" Margin="0,10,10,0" HorizontalContentAlignment="Center" Click="BtnAddInstrument_Click"/>
+            <Button x:Name="btnRemoveInstrument" Content="Remove" Width="150" Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" HorizontalContentAlignment="Center" Click="BtnRemoveInstrument_Click"/>
+
+            <!--SENSOR SECTION-->
+            <Label Content="CONFIGURE SENSORS" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
+
+            <DataGrid x:Name="SensorsDataGrid" Grid.Row="6" Grid.ColumnSpan="2" Margin="0,0,0,10" AutoGenerateColumns="True"/>
+
+            <Button x:Name="btnAddSensor" Content="Add" Width="150" Grid.Row="7" Grid.Column="0" Margin="0,10,10,0" HorizontalContentAlignment="Center" Click="BtnAddSensor_Click"/>
+            <Button x:Name="btnRemoveSensor" Content="Remove" Width="150" Grid.Row="7" Grid.Column="1" Margin="0,10,0,0" HorizontalContentAlignment="Center" Click="BtnRemoveSensor_Click"/>
+
+            <!--AI MODEL SECTION-->
+            <Label Content="CONFIGURE AI MODEL" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
+
+            <Label Content="Model name:" Grid.Row="9" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBox x:Name="txtModelName" Grid.Row="9" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" IsReadOnly="True"/>
+            
+            <Button x:Name="btnAddModel" Content="Add" Width="150" Grid.Row="10" Grid.Column="0" Margin="0,10,10,0" HorizontalContentAlignment="Center" Click="BtnAddModel_Click"/>
+            <Button x:Name="btnRemoveModel" Content="Remove" Width="150" Grid.Row="10" Grid.Column="1" Margin="0,10,0,0" HorizontalContentAlignment="Center" Click="BtnRemoveModel_Click"/>
+
+            <!-- SEPARATOR -->
+            <Separator Grid.Row="11" Grid.ColumnSpan="2" Margin="0,20"/>
+            <!-- CONTROLS-->
+            <Button x:Name="btnSave" Content="Save" Width="150" Grid.Row="12" Grid.Column="0" Margin="0,10,10,0" HorizontalContentAlignment="Center" Click="BtnSave_Click"/>
+            <Button x:Name="btnCancel" Content="Cancel" Width="150" Grid.Row="12" Grid.Column="1" Margin="0,10,0,0" HorizontalContentAlignment="Center" Click="BtnCancel_Click"/>
+        </Grid>
+</Window>
