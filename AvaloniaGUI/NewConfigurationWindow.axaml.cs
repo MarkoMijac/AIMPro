@@ -18,7 +18,7 @@ public partial class NewConfigurationWindow : Window
 
     private void BtnAddInstrument_Click(object sender, RoutedEventArgs e)
     {
-        var addInstrumentWindow = new AddInstrumentWindow();
+        var addInstrumentWindow = new AddInstrumentWindow(_configuration);
         var dialogTask = addInstrumentWindow.ShowDialog(this);
         dialogTask.ContinueWith(task =>
         {

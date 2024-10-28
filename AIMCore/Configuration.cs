@@ -1,9 +1,12 @@
 using System;
+using AIMCore.Communication;
 
 namespace AIMCore;
 
 public class Configuration
 {
+    private SensorFactory _sensorFactory;
+
     public string Name { get; set; }
 
     public ISensor BaseInstrument { get; set; }
@@ -12,11 +15,28 @@ public class Configuration
 
     public IModel AIModel { get; set; }
 
-    public Configuration()
+    public Configuration(SensorFactory sensorFactory)
     {
-        Sensors = new List<ISensor>();
+        _sensorFactory = sensorFactory;
     }
 
+    public Configuration()
+    {
+        
+    }
+
+    public void AddInstrument(string name, string requestCommand, CommunicationType communicationType, string parserType, params object[] communicationParameters)
+    {
+        ISensor sensor = _sensorFactory.CreateSensor(name, requestCommand, communicationType, parserType, communicationParameters);
+        BaseInstrument = sensor;
+    }
+
+    public void RemoveInstrument()
+    {
+        BaseInstrument = null;
+    }
+
+    
     public void ValidateConfiguration()
     {
         if(Name.Length == 0)

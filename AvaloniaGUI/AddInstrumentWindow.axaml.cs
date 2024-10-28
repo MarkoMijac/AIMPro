@@ -1,13 +1,116 @@
+using System;
+using System.Linq;
+using AIMCore;
+using AIMCore.Communication;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 
 namespace AvaloniaGUI;
 
 public partial class AddInstrumentWindow : Window
 {
-    public AddInstrumentWindow()
+    private Configuration _configuration;
+
+    public AddInstrumentWindow(Configuration configuration)
     {
+        _configuration = configuration;
         InitializeComponent();
+    }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        FillCommunicationTypes();
+        FillParsers();
+    }
+
+    private void FillParsers()
+    {
+        cmbParser.Items.Add("Scale (Default)");
+    }
+
+    private void FillCommunicationTypes()
+    {
+        Enum.GetValues<CommunicationType>().ToList().ForEach(x => cmbCommunicationType.Items.Add(x));
+    }
+
+    private void BtnCancel_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private void BtnSave_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            ValidateInput();
+            SaveInstrument();
+            Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private void ValidateInput()
+    {
+        if (string.IsNullOrEmpty(txtInstrumentName.Text))
+        {
+            throw new ArgumentException("Instrument name cannot be empty.");
+        }
+        if (string.IsNullOrEmpty(txtRequestCommand.Text))
+        {
+            throw new ArgumentException("Request command cannot be empty.");
+        }
+        if (cmbCommunicationType.SelectedIndex == -1)
+        {
+            throw new ArgumentException("Communication type must be selected.");
+        }
+        if (cmbParser.SelectedIndex == -1)
+        {
+            throw new ArgumentException("Parser must be selected.");
+        }
+        if (string.IsNullOrEmpty(txtPort.Text))
+        {
+            throw new ArgumentException("Port cannot be empty.");
+        }
+        if (string.IsNullOrEmpty(txtBaudRate.Text))
+        {
+            throw new ArgumentException("Baud rate cannot be empty.");
+        }
+    }
+
+    private void SaveInstrument()
+    {
+        string name = txtInstrumentName.Text;
+        string request = txtRequestCommand.Text;
+        string comType = cmbCommunicationType.SelectedItem.ToString();
+        
+        CommunicationType communicationType = GetCommunicationType(comType);
+
+        string parser = cmbParser.SelectedItem.ToString();
+        string port = txtPort.Text;
+        int baudRate = int.Parse(txtBaudRate.Text);
+
+        _configuration.AddInstrument(name, request, communicationType, parser, port, baudRate);
+    }
+
+    private CommunicationType GetCommunicationType(string comType)
+    {
+        switch (comType)
+        {
+        case "UART":
+            return CommunicationType.UART;
+        case "TCP":
+            return CommunicationType.USB;
+        case "UDP":
+            return CommunicationType.WiFi;
+        case "Bluetooth":
+            return CommunicationType.Bluetooth;
+        default:
+            throw new ArgumentException("Invalid communication type.");
+        }
     }
 }

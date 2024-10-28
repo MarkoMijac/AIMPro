@@ -1,22 +1,26 @@
 using System;
 using System.Text.Json;
+using AIMCore.Communication;
 
 namespace AIMCore;
 
-public static class ConfigurationManager
+public class ConfigurationManager
 {
-    public static Configuration LoadConfiguration(string path)
+    private SensorFactory _sensorFactory;
+
+    public ConfigurationManager(SensorFactory sensorFactory)
     {
-        Configuration configuration = new Configuration();
+        _sensorFactory = sensorFactory;
+    }
+
+    public Configuration LoadConfiguration(string path)
+    {
         string json = ReadConfigurationFile(path);
-        configuration = JsonSerializer.Deserialize<Configuration>(json) ?? new Configuration();
-
-
-
+        var configuration = JsonSerializer.Deserialize<Configuration>(json);
         return configuration;
     }
 
-    public static void SaveConfiguration(Configuration configuration, string path)
+    public void SaveConfiguration(Configuration configuration, string path)
     {
         try
         {
@@ -32,7 +36,7 @@ public static class ConfigurationManager
         }
     }
 
-    private static string ReadConfigurationFile(string path)
+    private string ReadConfigurationFile(string path)
     {
         if (!File.Exists(path))
         {
