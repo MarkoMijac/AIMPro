@@ -3,6 +3,7 @@ using System.Linq;
 using AIMCore;
 using AIMCore.Communication;
 using AIMCore.Parsers;
+using AIMCore.Sensors;
 using AIMSmartScale.Parsers;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,13 +14,13 @@ namespace AvaloniaGUI;
 
 public partial class AddInstrumentWindow : Window
 {
-    private Configuration _configuration;
     private ScaleMeasurementParserFactory _parserFactory;
     private DefaultCommunicationFactory _communicationFactory;
 
-    public AddInstrumentWindow(Configuration configuration)
+    public ISensor BaseInstrument { get; private set; }
+
+    public AddInstrumentWindow()
     {
-        _configuration = configuration;
         _parserFactory = new ScaleMeasurementParserFactory();
         _communicationFactory = new DefaultCommunicationFactory();
         InitializeComponent();
@@ -99,23 +100,11 @@ public partial class AddInstrumentWindow : Window
         string port = txtPort.Text;
         int baudRate = int.Parse(txtBaudRate.Text);
 
-        _configuration.AddInstrument(name, request, communicationType, parser, port, baudRate);
-    }
-
-    private CommunicationType GetCommunicationType(string comType)
-    {
-        switch (comType)
-        {
-        case "UART":
-            return CommunicationType.UART;
-        case "TCP":
-            return CommunicationType.USB;
-        case "UDP":
-            return CommunicationType.WiFi;
-        case "Bluetooth":
-            return CommunicationType.Bluetooth;
-        default:
-            throw new ArgumentException("Invalid communication type.");
-        }
+        BaseInstrument = new DefaultSensorBuilder()
+            .SetName(name)
+            .SetRequestCommand(request)
+            .SetCommunicationStrategy(communicationType)
+            .SetParser(parser)
+            .Build();
     }
 }

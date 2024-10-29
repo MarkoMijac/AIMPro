@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using AIMCore;
+using AIMCore.Sensors;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -9,6 +11,10 @@ namespace AvaloniaGUI;
 
 public partial class NewConfigurationWindow : Window
 {
+    private ISensor _baseInstrument;
+    private IModel _aiModel;
+    private List<ISensor> _sensors = new List<ISensor>();
+
     private Configuration _configuration = new Configuration();
 
     public NewConfigurationWindow()
@@ -18,35 +24,36 @@ public partial class NewConfigurationWindow : Window
 
     private void BtnAddInstrument_Click(object sender, RoutedEventArgs e)
     {
-        var addInstrumentWindow = new AddInstrumentWindow(_configuration);
+        var addInstrumentWindow = new AddInstrumentWindow();
         var dialogTask = addInstrumentWindow.ShowDialog(this);
         dialogTask.ContinueWith(task =>
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                DisplayInstrumentInfo();
+                _baseInstrument = addInstrumentWindow.BaseInstrument;
+                DisplayInstrumentInfo(_baseInstrument);
             });
         });
     }
 
-    private void DisplayInstrumentInfo()
+    private void DisplayInstrumentInfo(ISensor instrument)
     {
-        if(_configuration.BaseInstrument == null)
+        if(instrument == null)
         {
             txtInstrumentName.Text = string.Empty;
             btnRemoveInstrument.IsEnabled = false;
         }
         else
         {
-            txtInstrumentName.Text = _configuration.BaseInstrument.Name;
+            txtInstrumentName.Text = instrument.Name;
             btnRemoveInstrument.IsEnabled = true;
         }
     }
 
     private void BtnRemoveInstrument_Click(object sender, RoutedEventArgs e)
     {
-        _configuration.BaseInstrument = null;
-        DisplayInstrumentInfo();
+        _baseInstrument = null;
+        DisplayInstrumentInfo(_baseInstrument);
     }
 
     private void BtnAddModel_Click(object sender, RoutedEventArgs e)
@@ -57,29 +64,30 @@ public partial class NewConfigurationWindow : Window
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                DisplayModelInfo();
+                _aiModel = addModelWindow.AIModel;
+                DisplayModelInfo(_aiModel);
             });
         });
     }
 
-    private void DisplayModelInfo()
+    private void DisplayModelInfo(IModel aiModel)
     {
-        if(_configuration.AIModel == null)
+        if(aiModel == null)
         {
             txtModelName.Text = string.Empty;
             btnRemoveModel.IsEnabled = false;
         }
         else
         {
-            txtModelName.Text = _configuration.AIModel.Name;
+            txtModelName.Text = aiModel.Name;
             btnRemoveModel.IsEnabled = true;
         }
     }
 
     private void BtnRemoveModel_Click(object sender, RoutedEventArgs e)
     {
-        _configuration.AIModel = null;
-        DisplayModelInfo();
+        _aiModel = null;
+        DisplayModelInfo(_aiModel);
     }
 
     private void BtnAddSensor_Click(object sender, RoutedEventArgs e)
@@ -90,15 +98,20 @@ public partial class NewConfigurationWindow : Window
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                RefreshSensors();
+                var sensor = addSensorWindow.Sensor;
+                if(sensor != null)
+                {
+                    _sensors.Add(sensor);
+                    RefreshSensors(_sensors);
+                }
             });
         });
     }
 
-    private void RefreshSensors()
+    private void RefreshSensors(List<ISensor> sensors)
     {
-        SensorsDataGrid.ItemsSource = _configuration.Sensors;
-        btnRemoveSensor.IsEnabled = _configuration.Sensors.Count > 0;
+        SensorsDataGrid.ItemsSource = sensors;
+        btnRemoveSensor.IsEnabled = sensors.Count > 0;
     }
 
     private void BtnRemoveSensor_Click(object sender, RoutedEventArgs e)
@@ -106,14 +119,9 @@ public partial class NewConfigurationWindow : Window
         ISensor selectedSensor = GetSelectedSensor();
         if(selectedSensor != null)
         {
-            _configuration.Sensors.Remove(selectedSensor);
-            RefreshSensors();
+            _sensors.Remove(selectedSensor);
+            RefreshSensors(_sensors);
         }
-    }
-
-    private void txtConfigurationName_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        _configuration.Name = txtConfigurationName.Text;
     }
 
     private ISensor GetSelectedSensor()
@@ -123,7 +131,12 @@ public partial class NewConfigurationWindow : Window
 
     private void BtnSave_Click(object sender, RoutedEventArgs e)
     {
-
+        var configuration = new ConfigurationBuilder()
+            .SetName(txtConfigurationName.Text)
+            .SetInstrument(_baseInstrument)
+            .SetAIModel(_aiModel)
+            .SetSensors(_sensors)
+            .Build();
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)

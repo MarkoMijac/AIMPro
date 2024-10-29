@@ -42,7 +42,7 @@ public class UARTCommunication : CommunicationStrategy
         }
     }
 
-    public bool IsConnected => _serialPort.IsOpen;
+    public override bool IsConnected => _serialPort.IsOpen;
 
     public override string Receive()
     {

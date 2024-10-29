@@ -6,13 +6,6 @@ namespace AIMCore;
 
 public class ConfigurationManager
 {
-    private SensorFactory _sensorFactory;
-
-    public ConfigurationManager(SensorFactory sensorFactory)
-    {
-        _sensorFactory = sensorFactory;
-    }
-
     public Configuration LoadConfiguration(string path)
     {
         string json = ReadConfigurationFile(path);

@@ -1,6 +1,6 @@
 using System;
 
-namespace AIMCore;
+namespace AIMCore.Sensors;
 
 public interface ISensor
 {
@@ -8,5 +8,6 @@ public interface ISensor
     void Connect();
     void Disconnect();
     void RequestData();
+    MeasurementData ReceiveData();
     bool IsConnected { get; }
 }
