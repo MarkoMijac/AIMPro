@@ -111,6 +111,11 @@ public partial class NewConfigurationWindow : Window
         }
     }
 
+    private void TextBox_TextChanged(object sender, RoutedEventArgs e)
+    {
+        _configuration.Name = txtConfigurationName.Text;
+    }
+
     private ISensor GetSelectedSensor()
     {
         return SensorsDataGrid.SelectedItem as ISensor;

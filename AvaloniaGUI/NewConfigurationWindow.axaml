@@ -31,8 +31,8 @@
             <!--CONFIGURATION NAME-->
             <Label Content="CONFIGURATION INFO" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
 
-            <Label Content="Configuration name:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-            <TextBox x:Name="txtConfigurationName" Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" IsReadOnly="false"/>
+            <Label Content="Configuration name:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <TextBox x:Name="txtConfigurationName" Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" IsReadOnly="false" TextChanged="TextBox_TextChanged"/>
 
             <!--INSTRUMENT SECTION-->
             <Label Content="CONFIGURE INSTRUMENT" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
