@@ -111,7 +111,7 @@ public partial class NewConfigurationWindow : Window
         }
     }
 
-    private void TextBox_TextChanged(object sender, RoutedEventArgs e)
+    private void txtConfigurationName_TextChanged(object sender, TextChangedEventArgs e)
     {
         _configuration.Name = txtConfigurationName.Text;
     }

@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using AIMCore;
 using AIMCore.Communication;
+using AIMCore.Parsers;
+using AIMSmartScale.Parsers;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -12,10 +14,12 @@ namespace AvaloniaGUI;
 public partial class AddInstrumentWindow : Window
 {
     private Configuration _configuration;
+    private ScaleMeasurementParserFactory _parserFactory;
 
     public AddInstrumentWindow(Configuration configuration)
     {
         _configuration = configuration;
+        _parserFactory = new ScaleMeasurementParserFactory();
         InitializeComponent();
     }
 
@@ -27,7 +31,7 @@ public partial class AddInstrumentWindow : Window
 
     private void FillParsers()
     {
-        cmbParser.Items.Add("Scale (Default)");
+        _parserFactory.GetParsers().ForEach(x => cmbParser.Items.Add(x.Name));
     }
 
     private void FillCommunicationTypes()
@@ -90,7 +94,7 @@ public partial class AddInstrumentWindow : Window
         
         CommunicationType communicationType = GetCommunicationType(comType);
 
-        string parser = cmbParser.SelectedItem.ToString();
+        IMeasurementParser parser = cmbParser.SelectedItem as IMeasurementParser;
         string port = txtPort.Text;
         int baudRate = int.Parse(txtBaudRate.Text);
 

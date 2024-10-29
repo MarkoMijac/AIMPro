@@ -6,5 +6,5 @@ public interface IMeasurementParserFactory
 {
     List<IMeasurementParser> GetParsers();
 
-    IMeasurementParser GetParser(string parserType);
+    IMeasurementParser GetParser(string parserName);
 }

@@ -15,10 +15,9 @@ public class SensorFactory
         _parserFactory = parserFactory;
     }
 
-    public ISensor CreateSensor(string name, string requestCommand, CommunicationType communicationType, string parserType, object[] communicationParameters)
+    public ISensor CreateSensor(string name, string requestCommand, CommunicationType communicationType, IMeasurementParser parser, object[] communicationParameters)
     {
         var communicationStrategy = _communicationFactory.Create(communicationType, communicationParameters);
-        var parser = _parserFactory.GetParser(parserType);
 
         var sensor = new Sensor(name, requestCommand, communicationStrategy, parser);
         return sensor;

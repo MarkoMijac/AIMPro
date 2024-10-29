@@ -1,5 +1,6 @@
 using System;
 using AIMCore.Communication;
+using AIMCore.Parsers;
 
 namespace AIMCore;
 
@@ -25,9 +26,9 @@ public class Configuration
         
     }
 
-    public void AddInstrument(string name, string requestCommand, CommunicationType communicationType, string parserType, params object[] communicationParameters)
+    public void AddInstrument(string name, string requestCommand, CommunicationType communicationType, IMeasurementParser parser, params object[] communicationParameters)
     {
-        ISensor sensor = _sensorFactory.CreateSensor(name, requestCommand, communicationType, parserType, communicationParameters);
+        ISensor sensor = _sensorFactory.CreateSensor(name, requestCommand, communicationType, parser, communicationParameters);
         BaseInstrument = sensor;
     }
 
