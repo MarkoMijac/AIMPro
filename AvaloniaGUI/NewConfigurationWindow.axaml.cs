@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AIMCore;
 using AIMCore.Sensors;
 using Avalonia;
@@ -30,7 +31,7 @@ public partial class NewConfigurationWindow : Window
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                _baseInstrument = addInstrumentWindow.BaseInstrument;
+                _baseInstrument = addInstrumentWindow.Sensor;
                 DisplayInstrumentInfo(_baseInstrument);
             });
         });
@@ -92,7 +93,7 @@ public partial class NewConfigurationWindow : Window
 
     private void BtnAddSensor_Click(object sender, RoutedEventArgs e)
     {
-        var addSensorWindow = new AddSensorWindow();
+        var addSensorWindow = new AddInstrumentWindow();
         var dialogTask = addSensorWindow.ShowDialog(this);
         dialogTask.ContinueWith(task =>
         {
@@ -110,8 +111,8 @@ public partial class NewConfigurationWindow : Window
 
     private void RefreshSensors(List<ISensor> sensors)
     {
-        SensorsDataGrid.ItemsSource = sensors;
-        btnRemoveSensor.IsEnabled = sensors.Count > 0;
+
+        SensorsDataGrid.ItemsSource = sensors.ToList(); // Set the new items
     }
 
     private void BtnRemoveSensor_Click(object sender, RoutedEventArgs e)

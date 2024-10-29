@@ -17,7 +17,7 @@ public partial class AddInstrumentWindow : Window
     private ScaleMeasurementParserFactory _parserFactory;
     private DefaultCommunicationFactory _communicationFactory;
 
-    public ISensor BaseInstrument { get; private set; }
+    public ISensor Sensor { get; private set; }
 
     public AddInstrumentWindow()
     {
@@ -100,7 +100,7 @@ public partial class AddInstrumentWindow : Window
         string port = txtPort.Text;
         int baudRate = int.Parse(txtBaudRate.Text);
 
-        BaseInstrument = new DefaultSensorBuilder()
+        Sensor = new DefaultSensorBuilder()
             .SetName(name)
             .SetRequestCommand(request)
             .SetCommunicationStrategy(communicationType)
