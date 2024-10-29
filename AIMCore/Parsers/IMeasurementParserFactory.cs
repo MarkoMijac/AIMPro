@@ -4,5 +4,7 @@ namespace AIMCore.Parsers;
 
 public interface IMeasurementParserFactory
 {
-    IMeasurementParser Create(string parserType);
+    List<IMeasurementParser> GetParsers();
+
+    IMeasurementParser GetParser(string parserType);
 }
