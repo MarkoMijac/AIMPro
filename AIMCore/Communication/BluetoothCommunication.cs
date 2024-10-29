@@ -2,26 +2,29 @@ using System;
 
 namespace AIMCore.Communication;
 
-public class BluetoothCommunication : ICommunicationStrategy
+public class BluetoothCommunication : CommunicationStrategy
 {
-    public bool IsConnected => throw new NotImplementedException();
-
-    public void Connect()
+    public BluetoothCommunication()
+    {
+        IsConnected = false;
+        Name = "Bluetooth";
+    }
+    public override void Connect()
     {
         throw new NotImplementedException();
     }
 
-    public void Disconnect()
+    public override void Disconnect()
     {
         throw new NotImplementedException();
     }
 
-    public string Receive()
+    public override string Receive()
     {
         throw new NotImplementedException();
     }
 
-    public void Send(string command)
+    public override void Send(string command)
     {
         throw new NotImplementedException();
     }

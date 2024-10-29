@@ -15,11 +15,13 @@ public partial class AddInstrumentWindow : Window
 {
     private Configuration _configuration;
     private ScaleMeasurementParserFactory _parserFactory;
+    private DefaultCommunicationFactory _communicationFactory;
 
     public AddInstrumentWindow(Configuration configuration)
     {
         _configuration = configuration;
         _parserFactory = new ScaleMeasurementParserFactory();
+        _communicationFactory = new DefaultCommunicationFactory();
         InitializeComponent();
     }
 
@@ -31,12 +33,12 @@ public partial class AddInstrumentWindow : Window
 
     private void FillParsers()
     {
-        _parserFactory.GetParsers().ForEach(x => cmbParser.Items.Add(x.Name));
+        _parserFactory.GetParsers().ForEach(x => cmbParser.Items.Add(x));
     }
 
     private void FillCommunicationTypes()
     {
-        Enum.GetValues<CommunicationType>().ToList().ForEach(x => cmbCommunicationType.Items.Add(x));
+        _communicationFactory.GetCommunicationStrategies().ForEach(x => cmbCommunicationType.Items.Add(x));
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)
@@ -91,10 +93,9 @@ public partial class AddInstrumentWindow : Window
         string name = txtInstrumentName.Text;
         string request = txtRequestCommand.Text;
         string comType = cmbCommunicationType.SelectedItem.ToString();
-        
-        CommunicationType communicationType = GetCommunicationType(comType);
 
-        IMeasurementParser parser = cmbParser.SelectedItem as IMeasurementParser;
+        var communicationType = cmbCommunicationType.SelectedItem as ICommunicationStrategy;
+        var parser = cmbParser.SelectedItem as IMeasurementParser;
         string port = txtPort.Text;
         int baudRate = int.Parse(txtBaudRate.Text);
 

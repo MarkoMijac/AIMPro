@@ -26,9 +26,9 @@ public class Configuration
         
     }
 
-    public void AddInstrument(string name, string requestCommand, CommunicationType communicationType, IMeasurementParser parser, params object[] communicationParameters)
+    public void AddInstrument(string name, string requestCommand, ICommunicationStrategy communication, IMeasurementParser parser, params object[] communicationParameters)
     {
-        ISensor sensor = _sensorFactory.CreateSensor(name, requestCommand, communicationType, parser, communicationParameters);
+        ISensor sensor = _sensorFactory.CreateSensor(name, requestCommand, communication, parser, communicationParameters);
         BaseInstrument = sensor;
     }
 

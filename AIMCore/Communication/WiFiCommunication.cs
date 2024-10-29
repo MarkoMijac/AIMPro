@@ -2,26 +2,30 @@ using System;
 
 namespace AIMCore.Communication;
 
-public class WiFiCommunication : ICommunicationStrategy
+public class WiFiCommunication : CommunicationStrategy
 {
-    public bool IsConnected => throw new NotImplementedException();
+    public WiFiCommunication()
+    {
+        Name = "WiFi";
+        IsConnected = false;
+    }
 
-    public void Connect()
+    public override void Connect()
     {
         throw new NotImplementedException();
     }
 
-    public void Disconnect()
+    public override void Disconnect()
     {
         throw new NotImplementedException();
     }
 
-    public string Receive()
+    public override string Receive()
     {
         throw new NotImplementedException();
     }
 
-    public void Send(string command)
+    public override void Send(string command)
     {
         throw new NotImplementedException();
     }

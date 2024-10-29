@@ -3,13 +3,15 @@ using System.IO.Ports;
 
 namespace AIMCore.Communication;
 
-public class UARTCommunication : ICommunicationStrategy
+public class UARTCommunication : CommunicationStrategy
 {
     private readonly string _portName;
     private readonly int _baudRate;
     private SerialPort _serialPort;
     public UARTCommunication(string portName, int baudRate)
     {
+        Name = "UART";
+
         _portName = portName;
         _baudRate = baudRate;
         _serialPort = new SerialPort(_portName, _baudRate)
@@ -24,7 +26,7 @@ public class UARTCommunication : ICommunicationStrategy
         };
     }
     
-    public void Connect()
+    public override void Connect()
     {
         if(_serialPort.IsOpen == false)
         {
@@ -32,7 +34,7 @@ public class UARTCommunication : ICommunicationStrategy
         }
     }
 
-    public void Disconnect()
+    public override void Disconnect()
     {
         if(_serialPort.IsOpen)
         {
@@ -42,7 +44,7 @@ public class UARTCommunication : ICommunicationStrategy
 
     public bool IsConnected => _serialPort.IsOpen;
 
-    public string Receive()
+    public override string Receive()
     {
         if(_serialPort.IsOpen)
         {
@@ -54,7 +56,7 @@ public class UARTCommunication : ICommunicationStrategy
         }
     }
 
-    public void Send(string command)
+    public override void Send(string command)
     {
         if(_serialPort.IsOpen)
         {

@@ -1,14 +1,19 @@
 using System;
+using System.Diagnostics.Contracts;
+using System.Reflection.Metadata.Ecma335;
 using AIMCore;
 using AIMCore.Parsers;
 
 namespace AIMSmartScale.Parsers;
 
-public class ScaleMeasurementParser : IMeasurementParser
+public class ScaleMeasurementParser : MeasurementParser
 {
-    public string Name => "Scale Parser";
+    public ScaleMeasurementParser()
+    {
+        Name = "Scale Parser";
+    }
 
-    public MeasurementData Parse(string data)
+    public override MeasurementData Parse(string data)
     {
         var split = data.Split(' ');
         if (split.Length != 2)
@@ -22,10 +27,5 @@ public class ScaleMeasurementParser : IMeasurementParser
         }
 
         return new MeasurementData(weight, DateTime.Now, "kg");
-    }
-
-    public override string ToString()
-    {
-        return Name;
     }
 }

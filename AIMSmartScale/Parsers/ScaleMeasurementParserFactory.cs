@@ -5,13 +5,15 @@ namespace AIMSmartScale.Parsers;
 
 public class ScaleMeasurementParserFactory : IMeasurementParserFactory
 {
-    public List<IMeasurementParser> GetParsers()
+    private List<IMeasurementParser> _parsers;
+
+    public ScaleMeasurementParserFactory()
     {
-        return new List<IMeasurementParser> { new ScaleMeasurementParser() };
+        _parsers = new List<IMeasurementParser> { new ScaleMeasurementParser() };
     }
 
-    public IMeasurementParser GetParser(string parserName)
+    public List<IMeasurementParser> GetParsers()
     {
-        return new ScaleMeasurementParser();
+        return _parsers;
     }
 }
