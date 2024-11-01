@@ -27,7 +27,7 @@ public class DefaultSensor : SensorBase
         CommunicationStrategy.Send(RequestCommand);
     }
 
-    public override MeasurementData ReceiveData()
+    public override Measurement ReceiveData()
     {
         string data = CommunicationStrategy.Receive();
         return Parser.Parse(data);

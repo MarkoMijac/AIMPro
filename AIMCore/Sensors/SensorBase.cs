@@ -21,5 +21,5 @@ public abstract class SensorBase : ISensor
     public abstract void Connect();
     public abstract void Disconnect();
     public abstract void RequestData();
-    public abstract MeasurementData ReceiveData();
+    public abstract Measurement ReceiveData();
 }

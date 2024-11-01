@@ -8,6 +8,6 @@ public interface ISensor
     void Connect();
     void Disconnect();
     void RequestData();
-    MeasurementData ReceiveData();
+    Measurement ReceiveData();
     bool IsConnected { get; }
 }

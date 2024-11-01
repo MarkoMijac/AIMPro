@@ -13,7 +13,7 @@ public class ScaleMeasurementParser : MeasurementParser
         Name = "Scale Parser";
     }
 
-    public override MeasurementData Parse(string data)
+    public override Measurement Parse(string data)
     {
         var split = data.Split(' ');
         if (split.Length != 2)
@@ -26,6 +26,6 @@ public class ScaleMeasurementParser : MeasurementParser
             throw new Exception("Invalid weight format");
         }
 
-        return new MeasurementData(weight, DateTime.Now, "kg");
+        return new Measurement(weight, DateTime.Now);
     }
 }

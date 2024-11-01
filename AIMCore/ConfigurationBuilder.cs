@@ -7,7 +7,7 @@ public class ConfigurationBuilder
 {
     private ISensor _instrument;
     private List<ISensor> _sensors = new List<ISensor>();
-    private IModel _aiModel;
+    private IAIModel _aiModel;
     private string _name;
 
     public ConfigurationBuilder SetName(string name)
@@ -28,7 +28,7 @@ public class ConfigurationBuilder
         return this;
     }
 
-    public ConfigurationBuilder SetAIModel(IModel model)
+    public ConfigurationBuilder SetAIModel(IAIModel model)
     {
         _aiModel = model;
         return this;

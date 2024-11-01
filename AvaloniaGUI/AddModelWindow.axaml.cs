@@ -9,7 +9,7 @@ namespace AvaloniaGUI;
 
 public partial class AddModelWindow : Window
 {
-    public IModel AIModel { get; private set; }
+    public IAIModel AIModel { get; private set; }
 
     public AddModelWindow()
     {
@@ -36,26 +36,18 @@ public partial class AddModelWindow : Window
         {
             throw new ArgumentException("Model name cannot be empty.");
         }
-        if(string.IsNullOrEmpty(txtBaseAdress.Text))
+        if(string.IsNullOrEmpty(txtFilePath.Text))
         {
-            throw new ArgumentException("Base address cannot be empty.");
-        }
-        if(string.IsNullOrEmpty(txtPredictionRoute.Text))
-        {
-            throw new ArgumentException("Prediction route cannot be empty.");
+            throw new ArgumentException("File path cannot be empty.");
         }
     }
 
     private void SaveModel()
     {
         string name = txtModelName.Text;
-        string baseAddress = txtBaseAdress.Text;
-        string predictionRoute = txtPredictionRoute.Text;
+        string path = txtFilePath.Text;
 
-        var model = new AIModelService(name, baseAddress, predictionRoute);
-
-        var aim = AIM.Instance;
-        aim.AddAIModel(model);
+        AIModel = new AIModel(name, path);        
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)
