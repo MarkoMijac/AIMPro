@@ -11,7 +11,7 @@ public class Configuration
 
     public ISensor BaseInstrument { get; set; }
 
-    public List<ISensor> Sensors { get; set; }
+    public List<ISensor> Sensors { get; set; } = new List<ISensor>();
 
     public IAIModel AIModel { get; set; }
 }
