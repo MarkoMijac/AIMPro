@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="AvaloniaGUI.AddModelWindow"
-        Title="AddModelWindow">
+        Title="Add Model"  Height="800" Width="450">
   <Grid Margin="10">
       <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
@@ -26,10 +26,12 @@
       <Label Content="Model name:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
       <TextBox x:Name="txtModelName" Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center"/>
       
-      <Label Content="ONNX File Path:" Grid.Row="3" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-      <TextBox x:Name="txtFilePath" Grid.Row="3" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" />
+      <Label Content="ONNX File Path:" Grid.Row="2" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+      <TextBox x:Name="txtFilePath" Grid.Row="2" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" />
+      
+      <Button Content="Browse..." Grid.Row="3" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" Click="BtnBrowse_Click"/>
 
-      <Button x:Name="btnSave" Content="Save" Width="150" Grid.Row="8" Grid.Column="0" Margin="0,10,10,0" HorizontalContentAlignment="Center" Click="BtnSave_Click"/>
-      <Button x:Name="btnCancel" Content="Cancel" Width="150" Grid.Row="8" Grid.Column="1" Margin="0,10,0,0" HorizontalContentAlignment="Center" Click="BtnCancel_Click"/>
+      <Button x:Name="btnSave" Content="Save" Width="150" Grid.Row="4" Grid.Column="0" Margin="0,10,10,0" HorizontalContentAlignment="Center" Click="BtnSave_Click"/>
+      <Button x:Name="btnCancel" Content="Cancel" Width="150" Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" HorizontalContentAlignment="Center" Click="BtnCancel_Click"/>
   </Grid>
 </Window>

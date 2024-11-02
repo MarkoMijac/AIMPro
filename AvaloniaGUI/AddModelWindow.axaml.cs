@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using AIMCore;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 
 namespace AvaloniaGUI;
 
@@ -39,6 +41,24 @@ public partial class AddModelWindow : Window
         if(string.IsNullOrEmpty(txtFilePath.Text))
         {
             throw new ArgumentException("File path cannot be empty.");
+        }
+    }
+
+    private async void BtnBrowse_Click(object sender, RoutedEventArgs e)
+    {
+        var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Select Model File",
+            FileTypeFilter = new List<FilePickerFileType>
+            {
+                new FilePickerFileType("Model Files") { Patterns = new[] { "*.onnx", "*.pb" } }
+            },
+            AllowMultiple = false
+        });
+    
+        if (result != null && result.Count > 0)
+        {
+            txtFilePath.Text = result[0].Path.LocalPath;
         }
     }
 
