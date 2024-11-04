@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using AIMCore;
+using AIMCore.Configurations;
 using AIMCore.Sensors;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 
 namespace AvaloniaGUI;
@@ -130,7 +132,7 @@ public partial class NewConfigurationWindow : Window
         return SensorsDataGrid.SelectedItem as ISensor;
     }
 
-    private void BtnSave_Click(object sender, RoutedEventArgs e)
+    private async void BtnSave_Click(object sender, RoutedEventArgs e)
     {
         var configuration = new ConfigurationBuilder()
             .SetName(txtConfigurationName.Text)
@@ -138,6 +140,23 @@ public partial class NewConfigurationWindow : Window
             .SetAIModel(_aiModel)
             .SetSensors(_sensors)
             .Build();
+
+        var saveFileOptions = new FilePickerSaveOptions
+        {
+            DefaultExtension = "json",
+            SuggestedFileName = $"{configuration.Name}.json",
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                new FilePickerFileType("JSON Files") { Patterns = new[] { "*.json" } }
+            }
+        };
+
+        var result = await StorageProvider.SaveFilePickerAsync(saveFileOptions);
+        if (result != null)
+        {
+            var filePath = result.Path.LocalPath;
+            ConfigurationSerializer.SaveToFile(configuration, filePath);
+        }
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)

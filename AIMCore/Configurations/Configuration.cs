@@ -3,7 +3,7 @@ using AIMCore.Communication;
 using AIMCore.Parsers;
 using AIMCore.Sensors;
 
-namespace AIMCore;
+namespace AIMCore.Configurations;
 
 public class Configuration
 {

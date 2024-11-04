@@ -1,7 +1,7 @@
 using System;
 using AIMCore.Sensors;
 
-namespace AIMCore;
+namespace AIMCore.Configurations;
 
 public class ConfigurationBuilder
 {
@@ -38,6 +38,7 @@ public class ConfigurationBuilder
     public Configuration Build()
     {
         var configuration = new Configuration();
+        configuration.Name = _name;
         configuration.BaseInstrument = _instrument;
         configuration.Sensors.AddRange(_sensors);
         configuration.AIModel = _aiModel;
@@ -49,7 +50,7 @@ public class ConfigurationBuilder
 
     private void ValidateConfiguration(Configuration configuration)
     {
-        if (configuration.Name.Length == 0)
+        if (configuration.Name == null || configuration.Name == "")
         {
             throw new AIMException("Configuration name is not set!");
         }
