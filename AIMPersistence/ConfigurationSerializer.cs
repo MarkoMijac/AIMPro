@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.Json;
 using AIMCore.Configurations;
 
-namespace AIMCore
+namespace AIMPersistence
 {
     public static class ConfigurationSerializer
     {
