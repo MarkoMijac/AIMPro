@@ -5,8 +5,31 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="AvaloniaGUI.MainWindow"
         Title="AIM (AI powered Measurement Instrument)" Width="450" Height="600">
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-            <Button x:Name="btnNewConfiguration" Content="Create new Configuration..." Margin="5" Click="btnNewConfiguration_Click"/>
-            <Button Content="Load existing Configuration..." Margin="5"/>
-        </StackPanel>
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="CONFIGURATION INFO" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
+            <Label Content="Configuration name:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <TextBox x:Name="txtConfigurationName" Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center" IsReadOnly="true"/>
+            <Button x:Name="btnLoadConfiguration" Content="Load configuration..." Margin="5" Click="btnLoadConfiguration_Click"/>
+        </Grid>
 </Window>

@@ -3,6 +3,7 @@ using System.Linq;
 using AIMCore;
 using AIMCore.Configurations;
 using AIMCore.Sensors;
+using AIMPersistence;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;

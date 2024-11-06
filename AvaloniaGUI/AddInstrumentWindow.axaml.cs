@@ -5,6 +5,7 @@ using AIMCore.Communication;
 using AIMCore.Parsers;
 using AIMCore.Sensors;
 using AIMSmartScale.Parsers;
+using AIMSmartScale.Sensors;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -15,14 +16,14 @@ namespace AvaloniaGUI;
 public partial class AddInstrumentWindow : Window
 {
     private ScaleMeasurementParserFactory _parserFactory;
-    private DefaultCommunicationFactory _communicationFactory;
+    private TextBaseCommunicationFactory _communicationFactory;
 
     public ISensor Sensor { get; private set; }
 
     public AddInstrumentWindow()
     {
         _parserFactory = new ScaleMeasurementParserFactory();
-        _communicationFactory = new DefaultCommunicationFactory();
+        _communicationFactory = new TextBaseCommunicationFactory();
         InitializeComponent();
     }
 
@@ -95,12 +96,12 @@ public partial class AddInstrumentWindow : Window
         string request = txtRequestCommand.Text;
         string comType = cmbCommunicationType.SelectedItem.ToString();
 
-        var communicationType = cmbCommunicationType.SelectedItem as ICommunicationStrategy;
-        var parser = cmbParser.SelectedItem as IMeasurementParser;
+        var communicationType = cmbCommunicationType.SelectedItem as ICommunicationStrategy<string>;
+        var parser = cmbParser.SelectedItem as IMeasurementParser<string>;
         string port = txtPort.Text;
         int baudRate = int.Parse(txtBaudRate.Text);
 
-        Sensor = new DefaultSensorBuilder()
+        Sensor = new ScaleBuilder()
             .SetName(name)
             .SetRequestCommand(request)
             .SetCommunicationStrategy(communicationType)

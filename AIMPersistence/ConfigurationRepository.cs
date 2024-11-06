@@ -4,6 +4,7 @@ using AIMCore.Communication;
 using AIMCore.Configurations;
 using AIMCore.Sensors;
 using AIMSmartScale.Parsers;
+using AIMSmartScale.Sensors;
 
 namespace AIMPersistence;
 
@@ -11,17 +12,17 @@ public class ConfigurationRepository
 {
     public Configuration GetDefaultConfiguration()
     {
-        var comStrategyFactory = new DefaultCommunicationFactory();
+        var comStrategyFactory = new TextBaseCommunicationFactory();
         var measurementParserFactory = new ScaleMeasurementParserFactory();
 
         var uartStrategy = comStrategyFactory.GetCommunicationStrategies().OfType<UARTCommunication>().First();
         var parser = measurementParserFactory.GetParsers().OfType<ScaleMeasurementParser>().First();
 
-        var instrument = new DefaultSensor("SCALE", "GET_WEIGHT", uartStrategy, parser);
+        var instrument = new Scale("SCALE", "GET_WEIGHT", uartStrategy, parser);
 
         var sensors = new List<ISensor>();
-        var gyroscope = new DefaultSensor("GYROSCOPE", "GET_TILT", uartStrategy, parser);
-        var vibrationsensor = new DefaultSensor("VIBRATIONSENSOR", "GET_VIBR", uartStrategy, parser);
+        var gyroscope = new Gyroscope("GYROSCOPE", "GET_TILT", uartStrategy, parser);
+        var vibrationsensor = new Accelerometer("ACCELEROMETER", "GET_VIBR", uartStrategy, parser);
         sensors.Add(gyroscope);
         sensors.Add(vibrationsensor);
 

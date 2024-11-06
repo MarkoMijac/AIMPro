@@ -20,5 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AIMCore\AIMCore.csproj" />
     <ProjectReference Include="..\AIMSmartScale\AIMSmartScale.csproj" />
+    <ProjectReference Include="..\AIMPersistence\AIMPersistence.csproj" />
   </ItemGroup>
 </Project>
