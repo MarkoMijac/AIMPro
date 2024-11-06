@@ -1,13 +1,16 @@
 using System;
 using System.IO.Ports;
+using System.Runtime.InteropServices;
 
 namespace AIMCore.Communication;
 
-public class UARTCommunication : CommunicationStrategy
+public class UARTCommunication : CommunicationStrategy<string>
 {
     private readonly string _portName;
     private readonly int _baudRate;
     private SerialPort _serialPort;
+    public override bool IsConnected => _serialPort?.IsOpen ?? false;
+
     public UARTCommunication(string portName, int baudRate)
     {
         Name = "UART";
@@ -22,27 +25,36 @@ public class UARTCommunication : CommunicationStrategy
             Handshake = Handshake.None,
             RtsEnable = true,
             ReadTimeout = 500,
-            WriteTimeout = 500
+            WriteTimeout = 500,
+            NewLine = "\r\n"
         };
     }
     
     public override void Connect()
     {
-        if(_serialPort.IsOpen == false)
+        if(IsConnected == false)
         {
             _serialPort.Open();
         }
     }
 
+    public override async Task ConnectAsync()
+    {
+        await Task.Run(() => Connect());
+    }
+
     public override void Disconnect()
     {
-        if(_serialPort.IsOpen)
+        if(IsConnected == true)
         {
             _serialPort.Close();
         }
     }
 
-    public override bool IsConnected => _serialPort.IsOpen;
+    public override async Task DisconnectAsync()
+    {
+        await Task.Run(() => Disconnect());
+    }
 
     public override string Receive()
     {
@@ -56,6 +68,11 @@ public class UARTCommunication : CommunicationStrategy
         }
     }
 
+    public override async Task<string> ReceiveAsync()
+    {
+        return await Task.Run(() => Receive());
+    }
+
     public override void Send(string command)
     {
         if(_serialPort.IsOpen)
@@ -66,5 +83,10 @@ public class UARTCommunication : CommunicationStrategy
         {
             throw new InvalidOperationException("Serial port is not open");
         }
+    }
+
+    public override Task SendAsync(string command)
+    {
+        return Task.Run(() => Send(command));
     }
 }

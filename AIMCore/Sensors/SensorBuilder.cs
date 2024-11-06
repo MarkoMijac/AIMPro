@@ -4,52 +4,47 @@ using AIMCore.Parsers;
 
 namespace AIMCore.Sensors;
 
-public class DefaultSensorBuilder : ISensorBuilder
+public abstract class SensorBuilder<T> : ISensorBuilder
 {
-    private string _name;
-    private string _requestCommand;
-    private ICommunicationStrategy _communicationStrategy;
-    private IMeasurementParser _parser;
+    protected string _name;
+    protected string _requestCommand;
+    protected ICommunicationStrategy<T> _communicationStrategy;
+    protected IMeasurementParser<T> _parser;
 
-    public DefaultSensorBuilder SetName(string name)
+    public SensorBuilder<T> SetName(string name)
     {
         _name = name;
         return this;
     }
 
-    public DefaultSensorBuilder SetRequestCommand(string requestCommand)
+    public SensorBuilder<T> SetRequestCommand(string requestCommand)
     {
         _requestCommand = requestCommand;
         return this;
     }
 
-    public DefaultSensorBuilder SetCommunicationStrategy(ICommunicationStrategy communicationStrategy)
+    public SensorBuilder<T> SetCommunicationStrategy(ICommunicationStrategy<T> communicationStrategy)
     {
         _communicationStrategy = communicationStrategy;
         return this;
     }
 
-    public DefaultSensorBuilder SetParser(IMeasurementParser parser)
+    public SensorBuilder<T> SetParser(IMeasurementParser<T> parser)
     {
         _parser = parser;
         return this;
     }
 
 
-    public ISensor Build()
-    {
-        var sensor = new DefaultSensor(_name, _requestCommand, _communicationStrategy, _parser);
-        ValidateSensor(sensor);
-        return sensor;
-    }
+    public abstract ISensor Build();
 
-    private void ValidateSensor(DefaultSensor sensor)
+    protected virtual void ValidateSensor(SensorBase<T> sensor)
     {
         if (string.IsNullOrEmpty(sensor.Name))
         {
             throw new AIMException("Instrument name cannot be empty.");
         }
-        if (string.IsNullOrEmpty(sensor.RequestCommand))
+        if (sensor.RequestCommand == null)
         {
             throw new AIMException("Request command cannot be empty.");
         }

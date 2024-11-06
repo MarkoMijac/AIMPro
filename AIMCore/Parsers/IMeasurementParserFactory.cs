@@ -2,7 +2,7 @@ using System;
 
 namespace AIMCore.Parsers;
 
-public interface IMeasurementParserFactory
+public interface IMeasurementParserFactory<T>
 {
-    List<IMeasurementParser> GetParsers();
+    List<IMeasurementParser<T>> GetParsers();
 }

@@ -7,7 +7,12 @@ public interface ISensor
     string Name { get; }   
     void Connect();
     void Disconnect();
-    void RequestData();
-    Measurement ReceiveData();
+    void StartReading();
+    TimeSeriesData StopReading();
+
+    Task ConnectAsync();
+    Task DisconnectAsync();
+    Task StartReadingAsync();
+    Task<TimeSeriesData> StopReadingAsync();
     bool IsConnected { get; }
 }

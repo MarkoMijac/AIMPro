@@ -2,12 +2,21 @@ using System;
 
 namespace AIMCore.Communication;
 
-public interface ICommunicationStrategy
+public interface ICommunicationStrategy<T>
 {
     string Name {get;}
+    bool IsConnected { get; }
+    
     void Connect();
     void Disconnect();
-    void Send(string command);
-    string Receive();
-    bool IsConnected { get; }
+    
+    Task ConnectAsync();
+    Task DisconnectAsync();
+
+    void Send(T command);
+    Task SendAsync(T command);
+
+    T Receive();
+    Task<T> ReceiveAsync();
+    
 }

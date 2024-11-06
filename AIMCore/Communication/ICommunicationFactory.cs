@@ -2,7 +2,7 @@ using System;
 
 namespace AIMCore.Communication;
 
-public interface ICommunicationFactory
+public interface ICommunicationFactory<T>
 {
-    List<ICommunicationStrategy> GetCommunicationStrategies();
+    List<ICommunicationStrategy<T>> GetCommunicationStrategies();
 }
