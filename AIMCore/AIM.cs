@@ -8,20 +8,21 @@ public class AIM
 {
     public Configuration Configuration { get; set; }
     private MeasurementSession _measurementSession;
-    public AIM(Configuration configuration)
+
+    public AIM()
     {
-        Configuration = configuration;
+        
     }
 
-    public IPredictionResult Predict()
+    public IPredictionResult Predict(MeasurementSession session)
     {
-        if(_measurementSession == null)
+        if(session == null)
         {
             throw new AIMException("No measurement session data available!");
         }
 
         var aiModel = Configuration.AIModel;
-        var prediction = aiModel.Predict(_measurementSession);
+        var prediction = aiModel.Predict(session);
         ClearMeasurementSession();
 
         return prediction;
@@ -49,6 +50,7 @@ public class AIM
 
     public MeasurementSession EndMeasurementSession()
     {
+        var session = new MeasurementSession();
         var instrument = Configuration.BaseInstrument;
         var instrumentData = instrument.StopReading();
         _measurementSession.SetInstrumentData(instrumentData);
