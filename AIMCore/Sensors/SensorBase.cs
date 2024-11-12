@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http.Headers;
 using AIMCore.Communication;
 using AIMCore.Parsers;
 
@@ -13,13 +14,37 @@ public abstract class SensorBase<T> : ISensor
     public IMeasurementParser<T> Parser { get; protected set; }
 
     public virtual bool IsConnected => CommunicationStrategy == null? false : CommunicationStrategy.IsConnected;
-    public ICommunicationStrategy<T> CommunicationStrategy { get; set; }
+    public ICommunicationStrategy<T> CommunicationStrategy { get; protected set; }
     protected SensorBase(string name, T requestCommand, ICommunicationStrategy<T> communicationStrategy, IMeasurementParser<T> parser)
     {
+        ValidateInput(name, requestCommand, communicationStrategy, parser);
         Name = name;
         RequestCommand = requestCommand;
         CommunicationStrategy = communicationStrategy;
         Parser = parser;
+    }
+
+    protected virtual void ValidateInput(string name, T? requestCommand, ICommunicationStrategy<T> communicationStrategy, IMeasurementParser<T> parser)
+    {
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrEmpty(name))
+        {
+            throw new AIMException("Name cannot be null or empty.");
+        }
+
+        if (requestCommand == null)
+        {
+            throw new AIMException("Request command cannot be null.");
+        }
+
+        if (communicationStrategy == null)
+        {
+            throw new AIMException("Communication strategy cannot be null.");
+        }
+
+        if (parser == null)
+        {
+            throw new AIMException("Parser cannot be null.");
+        }
     }
 
     public virtual void Connect()
