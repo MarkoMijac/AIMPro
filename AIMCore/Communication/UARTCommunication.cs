@@ -49,7 +49,7 @@ public class UARTCommunication : CommunicationStrategy<string>
         }
         else
         {
-            throw new InvalidOperationException("Serial port is not open");
+            throw new AIMException("Serial port is not open");
         }
     }
 
@@ -66,7 +66,7 @@ public class UARTCommunication : CommunicationStrategy<string>
         }
         else
         {
-            throw new InvalidOperationException("Serial port is not open");
+            throw new AIMException("Serial port is not open");
         }
     }
 

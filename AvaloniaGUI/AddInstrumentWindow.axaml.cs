@@ -16,14 +16,12 @@ namespace AvaloniaGUI;
 public partial class AddInstrumentWindow : Window
 {
     private ScaleMeasurementParserFactory _parserFactory;
-    private TextBaseCommunicationFactory _communicationFactory;
 
     public ISensor Sensor { get; private set; }
 
     public AddInstrumentWindow()
     {
         _parserFactory = new ScaleMeasurementParserFactory();
-        _communicationFactory = new TextBaseCommunicationFactory();
         InitializeComponent();
     }
 
@@ -40,7 +38,7 @@ public partial class AddInstrumentWindow : Window
 
     private void FillCommunicationTypes()
     {
-        _communicationFactory.GetCommunicationStrategies().ForEach(x => cmbCommunicationType.Items.Add(x));
+
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)
