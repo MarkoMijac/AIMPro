@@ -1,4 +1,5 @@
 using System;
+using System.IO.Ports;
 using AIMCore;
 using AIMCore.Communication;
 using AIMCore.Configurations;
@@ -12,10 +13,22 @@ public class ConfigurationRepository
 {
     public Configuration GetDefaultConfiguration()
     {
-        var comStrategyFactory = new TextBaseCommunicationFactory();
         var measurementParserFactory = new ScaleMeasurementParserFactory();
 
-        var uartStrategy = comStrategyFactory.GetCommunicationStrategies().OfType<UARTCommunication>().First();
+        var serialPort = new SerialPort()
+        {
+            PortName = "/dev/ttyUSB0",
+            BaudRate = 9600,
+            Parity = Parity.None,
+            DataBits = 8,
+            StopBits = StopBits.One,
+            Handshake = Handshake.None,
+            RtsEnable = true
+        };
+
+        var portWrapper = new SerialPortWrapper(serialPort);
+
+        var uartStrategy = new UARTCommunication(portWrapper);
         var parser = measurementParserFactory.GetParsers().OfType<ScaleMeasurementParser>().First();
 
         var instrument = new Scale("SCALE", "GET_WEIGHT", uartStrategy, parser);

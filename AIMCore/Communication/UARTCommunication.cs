@@ -6,28 +6,13 @@ namespace AIMCore.Communication;
 
 public class UARTCommunication : CommunicationStrategy<string>
 {
-    private readonly string _portName;
-    private readonly int _baudRate;
-    private SerialPort _serialPort;
+    private ISerialPort _serialPort;
     public override bool IsConnected => _serialPort?.IsOpen ?? false;
 
-    public UARTCommunication(string portName, int baudRate)
+    public UARTCommunication(ISerialPort serialPort)
     {
         Name = "UART";
-
-        _portName = portName;
-        _baudRate = baudRate;
-        _serialPort = new SerialPort(_portName, _baudRate)
-        {
-            Parity = Parity.None,
-            StopBits = StopBits.One,
-            DataBits = 8,
-            Handshake = Handshake.None,
-            RtsEnable = true,
-            ReadTimeout = 500,
-            WriteTimeout = 500,
-            NewLine = "\r\n"
-        };
+        _serialPort = serialPort;
     }
     
     public override void Connect()
@@ -64,7 +49,7 @@ public class UARTCommunication : CommunicationStrategy<string>
         }
         else
         {
-            throw new InvalidOperationException("Serial port is not open");
+            throw new AIMException("Serial port is not open");
         }
     }
 
@@ -81,7 +66,7 @@ public class UARTCommunication : CommunicationStrategy<string>
         }
         else
         {
-            throw new InvalidOperationException("Serial port is not open");
+            throw new AIMException("Serial port is not open");
         }
     }
 
