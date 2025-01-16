@@ -13,6 +13,8 @@ public abstract class SensorBase<T> : ISensor
 
     public IMeasurementParser<T> Parser { get; protected set; }
 
+    public bool IsReading { get; protected set; }
+
     public virtual bool IsConnected => CommunicationStrategy == null? false : CommunicationStrategy.IsConnected;
     public ICommunicationStrategy<T> CommunicationStrategy { get; protected set; }
     protected SensorBase(string name, T requestCommand, ICommunicationStrategy<T> communicationStrategy, IMeasurementParser<T> parser)
@@ -22,6 +24,8 @@ public abstract class SensorBase<T> : ISensor
         RequestCommand = requestCommand;
         CommunicationStrategy = communicationStrategy;
         Parser = parser;
+
+        IsReading = false;
     }
 
     protected virtual void ValidateInput(string name, T? requestCommand, ICommunicationStrategy<T> communicationStrategy, IMeasurementParser<T> parser)
@@ -69,22 +73,45 @@ public abstract class SensorBase<T> : ISensor
     
     public virtual void StartReading()
     {
+        if(IsReading == true)
+        {
+            throw new AIMException("Sensor is already reading.");
+        }
+
+        IsReading = true;
         CommunicationStrategy.Send(RequestCommand);
     }
 
     public virtual async Task StartReadingAsync()
     {
+        if(IsReading == true)
+        {
+            throw new AIMException("Sensor is already reading.");
+        }
+        IsReading = true;
         await CommunicationStrategy.SendAsync(RequestCommand);
     }
     
     public virtual TimeSeriesData StopReading()
     {
+        if(IsReading == false)
+        {
+            throw new AIMException("Sensor is not reading.");
+        }
+
         T data = CommunicationStrategy.Receive();
+        IsReading = false;
         return Parser.Parse(data);
     }
     public virtual async Task<TimeSeriesData> StopReadingAsync()
     {
+        if(IsReading == false)
+        {
+            throw new AIMException("Sensor is not reading.");
+        }
+        
         T data = await CommunicationStrategy.ReceiveAsync();
+        IsReading = false;
         return Parser.Parse(data);
     }
 }
