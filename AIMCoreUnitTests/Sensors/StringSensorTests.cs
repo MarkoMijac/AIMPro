@@ -1,5 +1,6 @@
 using System;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using AIMCore;
 using AIMCore.Communication;
 using AIMCore.Parsers;
@@ -8,17 +9,17 @@ using FakeItEasy;
 
 namespace AIMCoreUnitTests.Sensors;
 
-public class SensorTests
+public class StringSensorTests
 {
-    private TestSensor sensor;
+    private StringSensor sensor;
     private ICommunicationStrategy<string> communication;
     private IMeasurementParser<string> parser;
 
-    public SensorTests()
+    public StringSensorTests()
     {
         communication = A.Fake<CommunicationStrategy<string>>();
         parser = A.Fake<MeasurementParser<string>>();
-        sensor = new TestSensor("Thermometer", "GET_TEMP", communication, parser);
+        sensor = new StringSensor("Thermometer", "GET_TEMP", communication, parser);
     }
 
     [Fact]
@@ -28,7 +29,7 @@ public class SensorTests
         string emptyName = string.Empty;
 
         // Act
-        Action act = () => new TestSensor(emptyName, "GET_TEMP", communication, parser);
+        Action act = () => new StringSensor(emptyName, "GET_TEMP", communication, parser);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -41,40 +42,70 @@ public class SensorTests
         string nullRequestCommand = null;
 
         // Act
-        Action act = () => new TestSensor("Thermometer", nullRequestCommand, communication, parser);
+        Action act = () => new StringSensor("Thermometer", nullRequestCommand, communication, parser);
 
         // Assert
         Assert.Throws<AIMException>(act);
     }
 
     [Fact]
-    public void Constructor_GivenParserIsNull_ShouldThrowArgumentNullException()
+    public void Constructor_GivenRequestCommandIsEmpty_ThrowsException()
     {
         // Arrange
-        IMeasurementParser<string> nullParser = null;
+        string requestCommand = "";
 
         // Act
-        Action act = () => new TestSensor("Thermometer", "GET_TEMP", communication, nullParser);
+        Action act = () => new StringSensor("Thermometer", requestCommand, communication, parser);
 
         // Assert
         Assert.Throws<AIMException>(act);
     }
 
     [Fact]
-    public void Constructor_GivenCommunicationIsNull_ShouldThrowArgumentNullException()
+    public void Constructor_GivenCommunicationStrategyIsNull_ThrowsException()
     {
         // Arrange
         ICommunicationStrategy<string> nullCommunication = null;
 
         // Act
-        Action act = () => new TestSensor("Thermometer", "GET_TEMP", nullCommunication, parser);
+        Action act = () => new StringSensor("Thermometer", "GET_TEMP", nullCommunication, parser);
 
         // Assert
         Assert.Throws<AIMException>(act);
     }
 
     [Fact]
-    public void Name_GivenName_ShouldReturnName()
+    public void Constructor_GivenParserIsNull_ThrowsException()
+    {
+        // Arrange
+        IMeasurementParser<string> nullParser = null;
+
+        // Act
+        Action act = () => new StringSensor("Thermometer", "GET_TEMP", communication, nullParser);
+
+        // Assert
+        Assert.Throws<AIMException>(act);
+    }
+
+    [Fact]
+    public void Constructor_GivenValidInputParameters_SetsPropertiesCorrectly()
+    {
+        // Arrange
+        string sensorName = "Thermometer";
+        string requestCommand = "GET_TEMP";
+
+        // Act
+        var sensor = new StringSensor(sensorName, requestCommand, communication, parser);
+
+        // Assert
+        Assert.Equal(sensorName, sensor.Name);
+        Assert.Equal(requestCommand, sensor.RequestCommand);
+        Assert.Equal(communication, sensor.CommunicationStrategy);
+        Assert.Equal(parser, sensor.Parser);
+    }
+
+    [Fact]
+    public void GetName_GivenNameIsSet_ReturnsName()
     {
         // Arrange
         string expected = "Thermometer";
@@ -87,7 +118,7 @@ public class SensorTests
     }
 
     [Fact]
-    public void RequestCommand_GivenRequestCommand_ShouldReturnRequestCommand()
+    public void GetRequestCommand_GivenRequestCommandIsSet_ReturnsRequestCommand()
     {
         // Arrange
         string expected = "GET_TEMP";
@@ -100,7 +131,7 @@ public class SensorTests
     }
 
     [Fact]
-    public void CommunicationStrategy_GivenCommunicationStrategy_ShouldReturnCommunicationStrategy()
+    public void GetCommunicationStrategy_GivenCommunicationStrategyIsSet_ReturnsCommunicationStrategy()
     {
         // Arrange
 
@@ -112,7 +143,7 @@ public class SensorTests
     }
 
     [Fact]
-    public void Parser_GivenParser_ShouldReturnParser()
+    public void GetParser_GivenParserIsSet_ReturnsParser()
     {
         // Arrange
 
@@ -199,6 +230,19 @@ public class SensorTests
     public void StopReading_GivenReadingIsStarted_InvokesCommunicationStrategyReceive()
     {
         // Arrange
+        sensor.StartReading();
+
+        // Act
+        sensor.StopReading();
+
+        // Assert
+        A.CallTo(() => sensor.CommunicationStrategy.Receive()).MustHaveHappened();
+    }
+
+    [Fact]
+    public void StopReading_GivenReadingIsStarted_InvokesParserParse()
+    {
+        // Arrange
         A.CallTo(() => communication.Receive()).Returns("25.0");
         sensor.StartReading();
 
@@ -206,11 +250,24 @@ public class SensorTests
         sensor.StopReading();
 
         // Assert
-        A.CallTo(() => communication.Receive()).MustHaveHappened();
+        A.CallTo(() => sensor.Parser.Parse("25.0")).MustHaveHappened();
     }
 
     [Fact]
     public async Task StopReadingAsync_GivenReadingIsStarted_InvokesCommunicationStrategyReceiveAsync()
+    {
+        // Arrange
+        sensor.StartReading();
+
+        // Act
+        await sensor.StopReadingAsync();
+
+        // Assert
+        A.CallTo(() => sensor.CommunicationStrategy.ReceiveAsync()).MustHaveHappened();
+    }
+
+    [Fact]
+    public async Task StopReadingAsync_GivenReadingIsStarted_InvokesParserParse()
     {
         // Arrange
         A.CallTo(() => communication.ReceiveAsync()).Returns("25.0");
@@ -220,7 +277,7 @@ public class SensorTests
         await sensor.StopReadingAsync();
 
         // Assert
-        A.CallTo(() => communication.ReceiveAsync()).MustHaveHappened();
+        A.CallTo(() => sensor.Parser.Parse("25.0")).MustHaveHappened();
     }
 
     [Fact]
@@ -260,15 +317,54 @@ public class SensorTests
     }
 
     [Fact]
+    public void StartReading_GivenReadingIsStarted_ThrowsException()
+    {
+        // Arrange
+        sensor.StartReading();
+
+        // Act
+        Action act = () => sensor.StartReading();
+
+        // Assert
+        Assert.Throws<AIMException>(act);
+    }
+
+    [Fact]
     public void StopReading_GivenReadingIsNotStarted_ThrowsException()
     {
         // Arrange
+        
 
         // Act
         Action act = () => sensor.StopReading();
 
         // Assert
         Assert.Throws<AIMException>(act);
+    }
+
+    [Fact]
+    public async Task StartReadingAsync_GivenReadingIsStarted_ThrowsException()
+    {
+        // Arrange
+        await sensor.StartReadingAsync();
+
+        // Act
+        Func<Task> act = sensor.StartReadingAsync;
+
+        // Assert
+        await Assert.ThrowsAsync<AIMException>(act);
+    }
+
+    [Fact]
+    public async Task StopReadingAsync_GivenReadingIsNotStarted_ThrowsException()
+    {
+        // Arrange
+
+        // Act
+        Func<Task> act = sensor.StopReadingAsync;
+
+        // Assert
+        await Assert.ThrowsAsync<AIMException>(act);
     }
 
 }
