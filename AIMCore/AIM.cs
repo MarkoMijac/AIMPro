@@ -9,9 +9,11 @@ public class AIM
     public Configuration Configuration { get; private set; }
     private MeasurementSession _measurementSession;
 
+    public AIMStatus Status { get; private set; }
+
     public AIM()
     {
-        
+        Status = AIMStatus.ConfigurationNotLoaded;
     }
 
     public IPredictionResult Predict(MeasurementSession session)
@@ -32,6 +34,7 @@ public class AIM
     {
         ValidateConfiguration(configuration);
         Configuration = configuration;
+        Status = AIMStatus.ConfigurationLoaded;
     }
 
     private static void ValidateConfiguration(Configuration configuration)
@@ -57,6 +60,8 @@ public class AIM
         _measurementSession = new MeasurementSession();
         ConnectAllSensors();
         StartReadingAllSensors();
+
+        Status = AIMStatus.MeasurementSessionStarted;
     }
 
     private void StartReadingAllSensors()
@@ -101,7 +106,6 @@ public class AIM
 
     public MeasurementSession EndMeasurementSession()
     {
-        var session = new MeasurementSession();
         var instrument = Configuration.BaseInstrument;
         var instrumentData = instrument.StopReading();
         _measurementSession.SetInstrumentData(instrumentData);
@@ -117,6 +121,7 @@ public class AIM
             sensor.Disconnect();
         }
 
+        Status = AIMStatus.MeasurementSessionStopped;
         return _measurementSession;
     }
 }

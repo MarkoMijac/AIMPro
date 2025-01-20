@@ -5,7 +5,7 @@ namespace AIMCore;
 public class TimeSeriesData
 {
     public string SourceName { get; set; }
-    public List<Measurement> Measurements { get; set; }
+    public List<Measurement> Measurements { get; private set; }
 
     public TimeSeriesData(string sourceName)
     {
