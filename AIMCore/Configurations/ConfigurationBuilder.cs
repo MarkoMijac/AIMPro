@@ -37,8 +37,7 @@ public class ConfigurationBuilder
 
     public Configuration Build()
     {
-        var configuration = new Configuration();
-        configuration.Name = _name;
+        var configuration = new Configuration(_name);
         configuration.BaseInstrument = _instrument;
         configuration.Sensors.AddRange(_sensors);
         configuration.AIModel = _aiModel;

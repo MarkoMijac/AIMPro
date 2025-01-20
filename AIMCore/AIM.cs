@@ -6,7 +6,7 @@ namespace AIMCore;
 
 public class AIM
 {
-    public Configuration Configuration { get; set; }
+    public Configuration Configuration { get; private set; }
     private MeasurementSession _measurementSession;
 
     public AIM()
@@ -28,6 +28,20 @@ public class AIM
         return prediction;
     }
 
+    public void LoadConfiguration(Configuration configuration)
+    {
+        ValidateConfiguration(configuration);
+        Configuration = configuration;
+    }
+
+    private static void ValidateConfiguration(Configuration configuration)
+    {
+        if (configuration == null || configuration.IsValid() == false)
+        {
+            throw new AIMException("Provided configuration is not valid!");
+        }
+    }
+
     private void ClearMeasurementSession()
     {
         _measurementSession = null;
@@ -35,17 +49,54 @@ public class AIM
 
     public void StartMeasurementSession()
     {
-        _measurementSession = new MeasurementSession();
+        if(Configuration == null)
+        {
+            throw new AIMException("No configuration loaded!");
+        }
 
+        _measurementSession = new MeasurementSession();
+        ConnectAllSensors();
+        StartReadingAllSensors();
+    }
+
+    private void StartReadingAllSensors()
+    {
         var instrument = Configuration.BaseInstrument;
-        instrument.Connect();
         instrument.StartReading();
 
         foreach (var sensor in Configuration.Sensors)
         {
-            sensor.Connect();
             sensor.StartReading();
         }
+    }
+
+    private void ConnectAllSensors()
+    {
+        var instrument = Configuration.BaseInstrument;
+        instrument.Connect();
+
+        foreach (var sensor in Configuration.Sensors)
+        {
+            sensor.Connect();
+        }
+    }
+
+    private async Task ConnectAllSensorsAsync()
+    {
+        List<Task> tasks = new List<Task>();
+        
+        var instrument = Configuration.BaseInstrument;
+        var instrumentConnect = instrument.ConnectAsync();
+        
+        tasks.Add(instrumentConnect);
+
+        foreach (var sensor in Configuration.Sensors)
+        {
+            var sensorConnect = sensor.ConnectAsync();
+            tasks.Add(sensorConnect);
+        }
+
+        Task.WaitAll(tasks.ToArray());
     }
 
     public MeasurementSession EndMeasurementSession()

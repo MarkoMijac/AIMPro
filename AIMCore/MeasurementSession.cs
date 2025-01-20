@@ -4,8 +4,8 @@ namespace AIMCore;
 
 public class MeasurementSession
 {
-    public TimeSeriesData BaseInstrumentData { get; set; }
-    public List<TimeSeriesData> SensorDataSeries { get; set; } = new List<TimeSeriesData>();
+    public TimeSeriesData BaseInstrumentData { get; private set; }
+    public List<TimeSeriesData> SensorDataSeries { get; private set; } = new List<TimeSeriesData>();
 
     public void SetInstrumentData(TimeSeriesData data)
     {

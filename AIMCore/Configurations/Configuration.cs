@@ -14,4 +14,14 @@ public class Configuration
     public List<ISensor> Sensors { get; set; } = new List<ISensor>();
 
     public IAIModel AIModel { get; set; }
+
+    public Configuration(string name)
+    {
+        Name = name;
+    }
+
+    public bool IsValid()
+    {
+        return BaseInstrument != null && Sensors.Count > 0 && AIModel != null;
+    }
 }

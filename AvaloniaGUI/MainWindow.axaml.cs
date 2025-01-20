@@ -23,7 +23,7 @@ public partial class MainWindow : Window
     {
         var confRepo = new ConfigurationRepository();
         var configuration = confRepo.GetDefaultConfiguration();
-        AIM.Configuration = configuration;
+        AIM.LoadConfiguration(configuration);
         
     }
 

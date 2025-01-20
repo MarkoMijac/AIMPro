@@ -19,8 +19,6 @@ public partial class NewConfigurationWindow : Window
     private IAIModel _aiModel;
     private List<ISensor> _sensors = new List<ISensor>();
 
-    private Configuration _configuration = new Configuration();
-
     public NewConfigurationWindow()
     {
         InitializeComponent();
