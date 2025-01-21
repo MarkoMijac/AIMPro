@@ -26,7 +26,7 @@ public class AIM
     {
         if(session == null || session.IsValid() == false)
         {
-            throw new AIMException("No measurement session data available!");
+            throw new AIMNoSessionDataAvailableException();
         }
 
         var aiModel = Configuration.AIModel;
@@ -47,12 +47,11 @@ public class AIM
     {
         if (configuration == null)
         {
-            throw new AIMException("No configuration loaded!");
+            throw new AIMNoConfigurationProvidedException();
         }
         else if(configuration.IsValid() == false)
         {
-            throw new AIMException("Provided configuration is not valid!");
-
+            throw new AIMInvalidConfigurationException();
         }
     }
 
@@ -114,11 +113,9 @@ public class AIM
 
     public MeasurementSession EndMeasurementSession()
     {
-        ValidateConfiguration(Configuration);
-
         if(Status != AIMStatus.MeasurementSessionStarted)
         {
-            throw new AIMException("No measurement session started!");
+            throw new AIMMeasurementSessionNotStartedException();
         }
 
         var instrument = Configuration.BaseInstrument;

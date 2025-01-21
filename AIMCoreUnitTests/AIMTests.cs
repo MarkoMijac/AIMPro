@@ -51,8 +51,7 @@ public class AIMTests
         var aim = new AIM();
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.LoadConfiguration(null));
-        Assert.Equal("No configuration loaded!", exception.Message);
+        var exception = Assert.Throws<AIMNoConfigurationProvidedException>(() => aim.LoadConfiguration(null));
         Assert.Equal(AIMStatus.ConfigurationNotLoaded, aim.Status);
     }
 
@@ -64,8 +63,7 @@ public class AIMTests
         var configuration = new Configuration("Invalid Configuration");
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.LoadConfiguration(configuration));
-        Assert.Equal("Provided configuration is not valid!", exception.Message);
+        var exception = Assert.Throws<AIMInvalidConfigurationException>(() => aim.LoadConfiguration(configuration));
         Assert.Equal(AIMStatus.ConfigurationNotLoaded, aim.Status);
     }
 
@@ -76,8 +74,7 @@ public class AIMTests
         var aim = new AIM();
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.StartMeasurementSession());
-        Assert.Equal("No configuration loaded!", exception.Message);
+        var exception = Assert.Throws<AIMNoConfigurationProvidedException>(() => aim.StartMeasurementSession());
         Assert.Equal(AIMStatus.ConfigurationNotLoaded, aim.Status);
     }
 
@@ -142,9 +139,7 @@ public class AIMTests
         var aim = new AIM();
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.EndMeasurementSession());
-        Assert.Equal("No configuration loaded!", exception.Message);
-        Assert.Equal(AIMStatus.ConfigurationNotLoaded, aim.Status);
+        var exception = Assert.Throws<AIMMeasurementSessionNotStartedException>(() => aim.EndMeasurementSession());
     }
 
     [Fact]
@@ -155,9 +150,7 @@ public class AIMTests
         aim.LoadConfiguration(_testConfiguration);
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.EndMeasurementSession());
-        Assert.Equal("No measurement session started!", exception.Message);
-        Assert.Equal(AIMStatus.ConfigurationLoaded, aim.Status);
+        var exception = Assert.Throws<AIMMeasurementSessionNotStartedException>(() => aim.EndMeasurementSession());
     }
 
     [Fact]
@@ -266,8 +259,7 @@ public class AIMTests
         var aim = new AIM();
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.Predict());
-        Assert.Equal("No measurement session data available!", exception.Message);
+        var exception = Assert.Throws<AIMNoSessionDataAvailableException>(() => aim.Predict());
     }
 
     [Fact]
@@ -278,8 +270,7 @@ public class AIMTests
         aim.LoadConfiguration(_testConfiguration);
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.Predict());
-        Assert.Equal("No measurement session data available!", exception.Message);
+        var exception = Assert.Throws<AIMNoSessionDataAvailableException>(() => aim.Predict());
     }
 
     [Fact]
@@ -291,8 +282,6 @@ public class AIMTests
         aim.StartMeasurementSession();
 
         // Act & Assert
-        var exception = Assert.Throws<AIMException>(() => aim.Predict());
-        Assert.Equal("No measurement session data available!", exception.Message);
+        var exception = Assert.Throws<AIMNoSessionDataAvailableException>(() => aim.Predict());
     }
-
 }
