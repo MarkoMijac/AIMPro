@@ -10,14 +10,45 @@ namespace AIMCoreUnitTests;
 
 public class AIMTests
 {
-    private Configuration _testConfiguration;
+    private Configuration _validConfiguration;
     public AIMTests()
     {
-        _testConfiguration = new Configuration("Test Configuration");
-        _testConfiguration.AIModel = A.Fake<IAIModel>();
-        _testConfiguration.BaseInstrument = A.Fake<ISensor>();
-        _testConfiguration.Sensors.Add(A.Fake<ISensor>());
-        _testConfiguration.Sensors.Add(A.Fake<ISensor>());
+        CreateTestConfiguration();
+    }
+
+    private Configuration CreateNoDataConfiguration()
+    {
+        var configuration = new Configuration("No Data Configuration");
+        configuration.AIModel = A.Fake<IAIModel>();
+        configuration.BaseInstrument = A.Fake<ISensor>();
+        configuration.Sensors.Add(A.Fake<ISensor>());
+        configuration.Sensors.Add(A.Fake<ISensor>());
+
+        return configuration;
+    }
+
+    private void CreateTestConfiguration()
+    {
+        _validConfiguration = new Configuration("Test Configuration");
+        _validConfiguration.AIModel = A.Fake<IAIModel>();
+        _validConfiguration.BaseInstrument = A.Fake<ISensor>();
+        _validConfiguration.Sensors.Add(A.Fake<ISensor>());
+        _validConfiguration.Sensors.Add(A.Fake<ISensor>());
+
+        var baseInstrument = _validConfiguration.BaseInstrument;
+        var baseInstrumentTestData = new TimeSeriesData("Base Instrument");
+        baseInstrumentTestData.AddMeasurement(new Measurement(1, DateTime.Now));
+        A.CallTo(() => baseInstrument.StopReading()).Returns(baseInstrumentTestData);
+
+        var sensor1 = _validConfiguration.Sensors[0];
+        var sensor1TestData = new TimeSeriesData("Sensor 1");
+        sensor1TestData.AddMeasurement(new Measurement(2, DateTime.Now));
+        A.CallTo(() => sensor1.StopReading()).Returns(sensor1TestData);
+
+        var sensor2 = _validConfiguration.Sensors[1];
+        var sensor2TestData = new TimeSeriesData("Sensor 2");
+        sensor2TestData.AddMeasurement(new Measurement(3, DateTime.Now));
+        A.CallTo(() => sensor2.StopReading()).Returns(sensor2TestData);
     }
 
     [Fact]
@@ -37,10 +68,10 @@ public class AIMTests
         var aim = new AIM();
 
         // Act
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
         // Assert
-        Assert.Equal(_testConfiguration, aim.Configuration);
+        Assert.Equal(_validConfiguration, aim.Configuration);
         Assert.Equal(AIMStatus.ConfigurationLoaded, aim.Status);
     }
 
@@ -83,11 +114,11 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
-        var baseInstrument = _testConfiguration.BaseInstrument;
-        var sensor1 = _testConfiguration.Sensors[0];
-        var sensor2 = _testConfiguration.Sensors[1];
+        var baseInstrument = _validConfiguration.BaseInstrument;
+        var sensor1 = _validConfiguration.Sensors[0];
+        var sensor2 = _validConfiguration.Sensors[1];
 
         // Act
         aim.StartMeasurementSession();
@@ -103,11 +134,11 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
-        var baseInstrument = _testConfiguration.BaseInstrument;
-        var sensor1 = _testConfiguration.Sensors[0];
-        var sensor2 = _testConfiguration.Sensors[1];
+        var baseInstrument = _validConfiguration.BaseInstrument;
+        var sensor1 = _validConfiguration.Sensors[0];
+        var sensor2 = _validConfiguration.Sensors[1];
 
         // Act
         aim.StartMeasurementSession();
@@ -123,7 +154,7 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
         // Act
         aim.StartMeasurementSession();
@@ -147,7 +178,7 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
         // Act & Assert
         var exception = Assert.Throws<AIMMeasurementSessionNotStartedException>(() => aim.EndMeasurementSession());
@@ -158,11 +189,11 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
-        var baseInstrument = _testConfiguration.BaseInstrument;
-        var sensor1 = _testConfiguration.Sensors[0];
-        var sensor2 = _testConfiguration.Sensors[1];
+        var baseInstrument = _validConfiguration.BaseInstrument;
+        var sensor1 = _validConfiguration.Sensors[0];
+        var sensor2 = _validConfiguration.Sensors[1];
 
         aim.StartMeasurementSession();
 
@@ -180,11 +211,11 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
-        var baseInstrument = _testConfiguration.BaseInstrument;
-        var sensor1 = _testConfiguration.Sensors[0];
-        var sensor2 = _testConfiguration.Sensors[1];
+        var baseInstrument = _validConfiguration.BaseInstrument;
+        var sensor1 = _validConfiguration.Sensors[0];
+        var sensor2 = _validConfiguration.Sensors[1];
 
         aim.StartMeasurementSession();
 
@@ -202,22 +233,9 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
-        var baseInstrument = _testConfiguration.BaseInstrument;
-        var baseInstrumentTestData = new TimeSeriesData("Base Instrument");
-        baseInstrumentTestData.AddMeasurement(new Measurement(1, DateTime.Now));
-        A.CallTo(() => baseInstrument.StopReading()).Returns(baseInstrumentTestData);
-
-        var sensor1 = _testConfiguration.Sensors[0];
-        var sensor1TestData = new TimeSeriesData("Sensor 1");
-        sensor1TestData.AddMeasurement(new Measurement(2, DateTime.Now));
-        A.CallTo(() => sensor1.StopReading()).Returns(sensor1TestData);
-
-        var sensor2 = _testConfiguration.Sensors[1];
-        var sensor2TestData = new TimeSeriesData("Sensor 2");
-        sensor2TestData.AddMeasurement(new Measurement(3, DateTime.Now));
-        A.CallTo(() => sensor2.StopReading()).Returns(sensor2TestData);
+        
 
         aim.StartMeasurementSession();
 
@@ -242,14 +260,14 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
         aim.StartMeasurementSession();
 
         // Act
         aim.EndMeasurementSession();
 
         // Assert
-        Assert.Equal(AIMStatus.MeasurementSessionStopped, aim.Status);
+        Assert.Equal(AIMStatus.MeasurementSessionEnded, aim.Status);
     }
 
     [Fact]
@@ -267,7 +285,7 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
 
         // Act & Assert
         var exception = Assert.Throws<AIMNoSessionDataAvailableException>(() => aim.Predict());
@@ -278,10 +296,58 @@ public class AIMTests
     {
         // Arrange
         var aim = new AIM();
-        aim.LoadConfiguration(_testConfiguration);
+        aim.LoadConfiguration(_validConfiguration);
         aim.StartMeasurementSession();
 
         // Act & Assert
         var exception = Assert.Throws<AIMNoSessionDataAvailableException>(() => aim.Predict());
+    }
+
+    [Fact]
+    public void Predict_GivenSessionEndedAndSessionIsInvalid_ThrowsException()
+    {
+        // Arrange
+        var aim = new AIM();
+        var emptyConfiguration = CreateNoDataConfiguration();
+        aim.LoadConfiguration(emptyConfiguration);
+        aim.StartMeasurementSession();
+        aim.EndMeasurementSession();
+
+        // Act & Assert
+        var exception = Assert.Throws<AIMNoSessionDataAvailableException>(() => aim.Predict());
+    }
+
+    [Fact]
+    public void Predict_GivenSessionEndedAndSessionIsValid_InvokesPrediction()
+    {
+        // Arrange
+        var aim = new AIM();
+        aim.LoadConfiguration(_validConfiguration);
+        aim.StartMeasurementSession();
+        var session = aim.EndMeasurementSession();
+
+        var aiModel = _validConfiguration.AIModel;
+
+        // Act
+        aim.Predict();
+
+        // Assert
+        A.CallTo(() => aiModel.Predict(session)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public void Predict_GivenSessionEndedAndSessionIsValid_ReturnsPrediction()
+    {
+        // Arrange
+        var aim = new AIM();
+        aim.LoadConfiguration(_validConfiguration);
+        aim.StartMeasurementSession();
+        aim.EndMeasurementSession();
+
+        // Act
+        var prediction = aim.Predict();
+
+        // Assert
+        Assert.NotNull(prediction);
     }
 }

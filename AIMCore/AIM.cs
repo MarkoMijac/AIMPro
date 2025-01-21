@@ -31,6 +31,7 @@ public class AIM
 
         var aiModel = Configuration.AIModel;
         var prediction = aiModel.Predict(session);
+
         ClearMeasurementSession();
 
         return prediction;
@@ -133,7 +134,7 @@ public class AIM
             sensor.Disconnect();
         }
 
-        Status = AIMStatus.MeasurementSessionStopped;
+        Status = AIMStatus.MeasurementSessionEnded;
         return _measurementSession;
     }
 }
