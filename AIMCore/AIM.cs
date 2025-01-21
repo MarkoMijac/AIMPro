@@ -16,9 +16,14 @@ public class AIM
         Status = AIMStatus.ConfigurationNotLoaded;
     }
 
-    public IPredictionResult Predict(MeasurementSession session)
+    public IPredictionResult Predict()
     {
-        if(session == null)
+        return Predict(_measurementSession);
+    }
+
+    private IPredictionResult Predict(MeasurementSession session)
+    {
+        if(session == null || session.IsValid() == false)
         {
             throw new AIMException("No measurement session data available!");
         }
@@ -39,9 +44,14 @@ public class AIM
 
     private static void ValidateConfiguration(Configuration configuration)
     {
-        if (configuration == null || configuration.IsValid() == false)
+        if (configuration == null)
+        {
+            throw new AIMException("No configuration loaded!");
+        }
+        else if(configuration.IsValid() == false)
         {
             throw new AIMException("Provided configuration is not valid!");
+
         }
     }
 
@@ -52,10 +62,7 @@ public class AIM
 
     public void StartMeasurementSession()
     {
-        if(Configuration == null)
-        {
-            throw new AIMException("No configuration loaded!");
-        }
+        ValidateConfiguration(Configuration);
 
         _measurementSession = new MeasurementSession();
         ConnectAllSensors();
@@ -106,6 +113,13 @@ public class AIM
 
     public MeasurementSession EndMeasurementSession()
     {
+        ValidateConfiguration(Configuration);
+
+        if(Status != AIMStatus.MeasurementSessionStarted)
+        {
+            throw new AIMException("No measurement session started!");
+        }
+
         var instrument = Configuration.BaseInstrument;
         var instrumentData = instrument.StopReading();
         _measurementSession.SetInstrumentData(instrumentData);
