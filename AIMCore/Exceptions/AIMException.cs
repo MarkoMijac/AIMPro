@@ -1,6 +1,6 @@
 using System;
 
-namespace AIMCore;
+namespace AIMCore.Exceptions;
 
 public class AIMException : ApplicationException
 {

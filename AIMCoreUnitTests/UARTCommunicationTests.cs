@@ -1,6 +1,6 @@
 //Generate xunit tests using FakeItEasy library for UARTCommunication class
-using AIMCore;
 using AIMCore.Communication;
+using AIMCore.Exceptions;
 using FakeItEasy;
 
 namespace AIMCoreUnitTests

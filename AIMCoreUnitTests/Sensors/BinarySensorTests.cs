@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using AIMCore;
 using AIMCore.Communication;
+using AIMCore.Exceptions;
 using AIMCore.Parsers;
 using AIMCore.Sensors;
 using FakeItEasy;

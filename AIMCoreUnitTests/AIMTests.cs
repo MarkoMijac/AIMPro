@@ -2,6 +2,7 @@ using System;
 using System.Runtime.Intrinsics.X86;
 using AIMCore;
 using AIMCore.Configurations;
+using AIMCore.Exceptions;
 using AIMCore.Sensors;
 using FakeItEasy;
 

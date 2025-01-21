@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices.Marshalling;
 using AIMCore.Configurations;
+using AIMCore.Exceptions;
 
 namespace AIMCore;
 

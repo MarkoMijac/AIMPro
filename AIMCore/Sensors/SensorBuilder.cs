@@ -1,5 +1,6 @@
 using System;
 using AIMCore.Communication;
+using AIMCore.Exceptions;
 using AIMCore.Parsers;
 
 namespace AIMCore.Sensors;

@@ -1,4 +1,5 @@
 using System;
+using AIMCore.Exceptions;
 using AIMCore.Sensors;
 
 namespace AIMCore.Configurations;

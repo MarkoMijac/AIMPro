@@ -1,6 +1,7 @@
 using System;
 using System.IO.Ports;
 using System.Runtime.InteropServices;
+using AIMCore.Exceptions;
 
 namespace AIMCore.Communication;
 
