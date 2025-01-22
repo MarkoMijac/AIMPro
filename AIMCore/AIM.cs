@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices.Marshalling;
 using AIMCore.Configurations;
 using AIMCore.Exceptions;
+using AIMCore.StateMachine;
 
 namespace AIMCore;
 
@@ -10,23 +11,30 @@ public class AIM
     public Configuration Configuration { get; private set; }
     private MeasurementSession _measurementSession;
 
-    public AIMStatus Status { get; private set; }
+    private AIMStateManager _stateManager;
+
+    internal AIMStatus Status 
+    { 
+        get
+        {
+            return _stateManager.CurrentStatus;
+        }
+    }
 
     public AIM()
     {
-        Status = AIMStatus.ConfigurationNotLoaded;
+        _stateManager = new AIMStateManager();
     }
 
-    public IPredictionResult Predict()
+    public IPredictionResult Predict(MeasurementSession session)
     {
-        return Predict(_measurementSession);
-    }
-
-    private IPredictionResult Predict(MeasurementSession session)
-    {
-        if(session == null || session.IsValid() == false)
+        if(session == null)
         {
             throw new AIMNoSessionDataAvailableException();
+        }
+        else if(session.IsValid() == false)
+        {
+            throw new AIMInvalidSessionDataException();
         }
 
         var aiModel = Configuration.AIModel;
@@ -40,8 +48,16 @@ public class AIM
     public void LoadConfiguration(Configuration configuration)
     {
         ValidateConfiguration(configuration);
+
+        if(Configuration == null)
+        {
+            _stateManager.PerformTransition(ActivationEvent.LoadConfiguration);
+        }
+        else
+        {
+            _stateManager.PerformTransition(ActivationEvent.ChangeConfiguration);
+        }
         Configuration = configuration;
-        Status = AIMStatus.ConfigurationLoaded;
     }
 
     private static void ValidateConfiguration(Configuration configuration)
@@ -65,11 +81,11 @@ public class AIM
     {
         ValidateConfiguration(Configuration);
 
+        _stateManager.PerformTransition(ActivationEvent.StartMeasurementSession);
+        
         _measurementSession = new MeasurementSession();
         ConnectAllSensors();
         StartReadingAllSensors();
-
-        Status = AIMStatus.MeasurementSessionStarted;
     }
 
     private void StartReadingAllSensors()
@@ -114,10 +130,13 @@ public class AIM
 
     public MeasurementSession EndMeasurementSession()
     {
-        if(Status != AIMStatus.MeasurementSessionStarted)
+        ValidateConfiguration(Configuration);
+        if(Status != AIMStatus.Measuring)
         {
             throw new AIMMeasurementSessionNotStartedException();
         }
+
+        _stateManager.PerformTransition(ActivationEvent.EndMeasurementSession);
 
         var instrument = Configuration.BaseInstrument;
         var instrumentData = instrument.StopReading();
@@ -134,7 +153,6 @@ public class AIM
             sensor.Disconnect();
         }
 
-        Status = AIMStatus.MeasurementSessionEnded;
         return _measurementSession;
     }
 }
