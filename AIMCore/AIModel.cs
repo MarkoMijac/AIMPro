@@ -54,6 +54,33 @@ public class AIModel : IAIModel
         }
     }
 
+    public async Task<IPredictionResult> PredictAsync(MeasurementSession session)
+    {
+        if (_session == null)
+        {
+            throw new InvalidOperationException("Model session is not initialized.");
+        }
+    
+        var inputTensors = await PrepareInputTensorsAsync(session);
+    
+        using (var results = await Task.Run(() => _session.Run(inputTensors)))
+        {
+            var outputValues = results.First().AsEnumerable<float>().ToArray();
+            
+            // Assuming the model outputs a single corrected value and confidence score
+            return new PredictionResult
+            {
+                CorrectedMeasurement = outputValues[0],
+                ConfidenceScore = outputValues[1]
+            };
+        }
+    }
+
+    private async Task<List<NamedOnnxValue>> PrepareInputTensorsAsync(MeasurementSession session)
+    {
+        return await Task.Run(() => PrepareInputTensors(session));
+    }
+
     private List<NamedOnnxValue> PrepareInputTensors(MeasurementSession session)
     {
         var inputs = new List<NamedOnnxValue>();

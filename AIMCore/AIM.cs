@@ -42,6 +42,23 @@ public class AIM
         return prediction;
     }
 
+    public async Task<IPredictionResult> PredictionAsync(MeasurementSession session)
+    {
+        if (session == null)
+        {
+            throw new AIMNoSessionDataAvailableException();
+        }
+        else if (session.IsValid() == false)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
+
+        var aiModel = Configuration.AIModel;
+        var prediction = await aiModel.PredictAsync(session);
+
+        return prediction;
+    }
+
     public void LoadConfiguration(Configuration configuration)
     {
         ValidateConfiguration(configuration);

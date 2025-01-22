@@ -609,6 +609,16 @@ public class AIMTests
     }
 
     [Fact]
+    public async Task PredictAsync_GivenSessionIsNull_ThrowsException()
+    {
+        //Arrange
+        var aim = new AIM();
+
+        //Act & Assert
+        var exception = await Assert.ThrowsAsync<AIMNoSessionDataAvailableException>(() => aim.PredictionAsync(null));
+    }
+
+    [Fact]
     public void Predict_GivenSessionEndedAndSessionIsInvalid_ThrowsException()
     {
         // Arrange
@@ -620,6 +630,20 @@ public class AIMTests
 
         // Act & Assert
         var exception = Assert.Throws<AIMInvalidSessionDataException>(() => aim.Predict(session));
+    }
+
+    [Fact]
+    public async Task PredictAsync_GivenSessionEndedAndSessionIsInvalid_ThrowsException()
+    {
+        // Arrange
+        var aim = new AIM();
+        var emptyConfiguration = CreateNoDataConfiguration();
+        aim.LoadConfiguration(emptyConfiguration);
+        await aim.StartMeasurementSessionAsync();
+        var session = await aim.EndMeasurementSessionAsync();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<AIMInvalidSessionDataException>(() => aim.PredictionAsync(session));
     }
 
     [Fact]
@@ -642,6 +666,25 @@ public class AIMTests
     }
 
     [Fact]
+    public async Task PredictAsync_SessionDataIsValid_InvokesPrediction()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+        await aim.StartMeasurementSessionAsync();
+        var session = await aim.EndMeasurementSessionAsync();
+
+        var aiModel = validConfiguration.AIModel;
+
+        // Act
+        await aim.PredictionAsync(session);
+
+        // Assert
+        A.CallTo(() => aiModel.PredictAsync(session)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
     public void Predict_GivenSessionDataIsValid_ReturnsPrediction()
     {
         // Arrange
@@ -653,6 +696,23 @@ public class AIMTests
 
         // Act
         var prediction = aim.Predict(session);
+
+        // Assert
+        Assert.NotNull(prediction);
+    }
+
+    [Fact]
+    public async Task PredictAsync_GivenSessionDataIsValid_ReturnsPrediction()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+        await aim.StartMeasurementSessionAsync();
+        var session = await aim.EndMeasurementSessionAsync();
+
+        // Act
+        var prediction = await aim.PredictionAsync(session);
 
         // Assert
         Assert.NotNull(prediction);
