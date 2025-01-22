@@ -46,16 +46,19 @@ public class AIMTests
         var baseInstrumentTestData = new TimeSeriesData("Base Instrument");
         baseInstrumentTestData.AddMeasurement(new Measurement(1, DateTime.Now));
         A.CallTo(() => baseInstrument.StopReading()).Returns(baseInstrumentTestData);
+        A.CallTo(() => baseInstrument.StopReadingAsync()).Returns(baseInstrumentTestData);
 
         var sensor1 = configuration.Sensors[0];
         var sensor1TestData = new TimeSeriesData("Sensor 1");
         sensor1TestData.AddMeasurement(new Measurement(2, DateTime.Now));
         A.CallTo(() => sensor1.StopReading()).Returns(sensor1TestData);
+        A.CallTo(() => sensor1.StopReadingAsync()).Returns(sensor1TestData);
 
         var sensor2 = configuration.Sensors[1];
         var sensor2TestData = new TimeSeriesData("Sensor 2");
         sensor2TestData.AddMeasurement(new Measurement(3, DateTime.Now));
         A.CallTo(() => sensor2.StopReading()).Returns(sensor2TestData);
+        A.CallTo(() => sensor2.StopReadingAsync()).Returns(sensor2TestData);
 
         return configuration;
     }
@@ -385,6 +388,17 @@ public class AIMTests
     }
 
     [Fact]
+    public async Task EndMeasurementSessionAsync_GivenConfigurationNotLoaded_ThrowsException()
+    {
+        // Arrange
+        var aim = new AIM();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<AIMNoConfigurationProvidedException>(() => aim.EndMeasurementSessionAsync());
+        Assert.Equal(AIMStatus.NoConfiguration, aim.Status);
+    }
+
+    [Fact]
     public void EndMeasurementSession_GivenSessionNotStarted_ThrowsException()
     {
         // Arrange
@@ -394,6 +408,19 @@ public class AIMTests
 
         // Act & Assert
         var exception = Assert.Throws<AIMMeasurementSessionNotStartedException>(() => aim.EndMeasurementSession());
+        Assert.Equal(AIMStatus.Ready, aim.Status);
+    }
+
+    [Fact]
+    public async Task EndMeasurementSessionAsync_GivenSessionNotStarted_ThrowsException()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<AIMMeasurementSessionNotStartedException>(() => aim.EndMeasurementSessionAsync());
         Assert.Equal(AIMStatus.Ready, aim.Status);
     }
 
@@ -421,6 +448,29 @@ public class AIMTests
     }
 
     [Fact]
+    public async Task EndMeasurementSessionAsync_GivenSessionStarted_AllSensorsStopReading()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        var sensor1 = validConfiguration.Sensors[0];
+        var sensor2 = validConfiguration.Sensors[1];
+
+        await aim.StartMeasurementSessionAsync();
+
+        // Act
+        await aim.EndMeasurementSessionAsync();
+
+        // Assert
+        A.CallTo(() => baseInstrument.StopReadingAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor1.StopReadingAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor2.StopReadingAsync()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
     public void EndMeasurementSession_GivenSessionStarted_AllSensorsDisconnecting()
     {
         // Arrange
@@ -441,6 +491,29 @@ public class AIMTests
         A.CallTo(() => baseInstrument.Disconnect()).MustHaveHappenedOnceExactly();
         A.CallTo(() => sensor1.Disconnect()).MustHaveHappenedOnceExactly();
         A.CallTo(() => sensor2.Disconnect()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task EndMeasurementSessionAsync_GivenSessionStarted_AllSensorsDisconnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        var sensor1 = validConfiguration.Sensors[0];
+        var sensor2 = validConfiguration.Sensors[1];
+
+        await aim.StartMeasurementSessionAsync();
+
+        // Act
+        await aim.EndMeasurementSessionAsync();
+
+        // Assert
+        A.CallTo(() => baseInstrument.DisconnectAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor1.DisconnectAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor2.DisconnectAsync()).MustHaveHappenedOnceExactly();
     }
 
     [Fact]
@@ -469,6 +542,31 @@ public class AIMTests
     }
 
     [Fact]
+    public async Task EndMeasurementSessionAsync_GivenSessionStarted_ReturnsMeasurementSession()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+        await aim.StartMeasurementSessionAsync();
+
+        // Act
+        var session = await aim.EndMeasurementSessionAsync();
+
+        // Assert
+        Assert.NotNull(session);
+        Assert.NotNull(session.BaseInstrumentData);
+        Assert.NotEmpty(session.BaseInstrumentData.Measurements);
+
+        Assert.NotNull(session.SensorDataSeries);
+        Assert.NotEmpty(session.SensorDataSeries);
+        Assert.All(session.SensorDataSeries, data =>
+        {
+            Assert.NotEmpty(data.Measurements);
+        });
+    }
+
+    [Fact]
     public void EndMeasurementSession_GivenSessionStarted_StatusIsReady()
     {
         // Arrange
@@ -479,6 +577,22 @@ public class AIMTests
 
         // Act
         aim.EndMeasurementSession();
+
+        // Assert
+        Assert.Equal(AIMStatus.Ready, aim.Status);
+    }
+
+    [Fact]
+    public async Task EndMeasurementSessionAsync_GivenSessionStarted_StatusIsReady()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+        await aim.StartMeasurementSessionAsync();
+
+        // Act
+        await aim.EndMeasurementSessionAsync();
 
         // Assert
         Assert.Equal(AIMStatus.Ready, aim.Status);
