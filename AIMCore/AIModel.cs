@@ -1,4 +1,5 @@
 using System;
+using AIMCore.Exceptions;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 
@@ -6,42 +7,63 @@ namespace AIMCore;
 
 public class AIModel : IAIModel
 {
-    private InferenceSession _session;
+    private InferenceSession _model;
     public string Name { get; private set; }
     public string Path { get; private set; }
 
     public AIModel(string name, string path)
     {
         Name = name;
-        Path = path;
+        LoadModel(path);
     }
 
-    public void LoadModel()
+    private void LoadModel(string path)
     {
+        ValidatePath(path);
+
         try
         {
-            _session = new InferenceSession(Path);
+            _model = new InferenceSession(path);
+            Path = path;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw;
+            throw new AIMLoadingModelException();
+        }
+    }
+
+    private void ValidatePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new AIMInvalidModelPathException();
+        }
+        else if(File.Exists(path)==false)
+        {
+            throw new AIMInvalidModelPathException();
+        }
+        else if (System.IO.Path.GetExtension(path).ToLower() != ".onnx")
+        {
+            throw new AIMInvalidModelPathException();
         }
     }
 
     public void UnloadModel()
     {
-        _session?.Dispose();
-        _session = null;// Unload the model
+        _model?.Dispose();
+        _model = null;// Unload the model
     }
 
     public IPredictionResult Predict(MeasurementSession session)
     {
-        if (_session == null)
-        throw new InvalidOperationException("Model session is not initialized.");
+        if(session == null)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
 
         var inputTensors = PrepareInputTensors(session);
 
-        using (var results = _session.Run(inputTensors))
+        using (var results = _model.Run(inputTensors))
         {
             var outputValues = results.First().AsEnumerable<float>().ToArray();
             
@@ -56,14 +78,14 @@ public class AIModel : IAIModel
 
     public async Task<IPredictionResult> PredictAsync(MeasurementSession session)
     {
-        if (_session == null)
+        if(session == null)
         {
-            throw new InvalidOperationException("Model session is not initialized.");
+            throw new AIMInvalidSessionDataException();
         }
     
         var inputTensors = await PrepareInputTensorsAsync(session);
     
-        using (var results = await Task.Run(() => _session.Run(inputTensors)))
+        using (var results = await Task.Run(() => _model.Run(inputTensors)))
         {
             var outputValues = results.First().AsEnumerable<float>().ToArray();
             
@@ -99,5 +121,10 @@ public class AIModel : IAIModel
         }
 
         return inputs;
+    }
+
+    public void Dispose()
+    {
+        UnloadModel();
     }
 }
