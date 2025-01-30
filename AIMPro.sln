@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIMPersistence", "AIMPersis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIMCoreUnitTests", "AIMCoreUnitTests\AIMCoreUnitTests.csproj", "{0328EDA6-D793-4D3E-ACB3-AFAEAD87C2B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIMCore.IntegrationTests", "AIMCore.IntegrationTests\AIMCore.IntegrationTests.csproj", "{B789B05F-C5E3-41D5-823D-1201EC3591A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{0328EDA6-D793-4D3E-ACB3-AFAEAD87C2B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0328EDA6-D793-4D3E-ACB3-AFAEAD87C2B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0328EDA6-D793-4D3E-ACB3-AFAEAD87C2B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B789B05F-C5E3-41D5-823D-1201EC3591A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B789B05F-C5E3-41D5-823D-1201EC3591A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B789B05F-C5E3-41D5-823D-1201EC3591A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B789B05F-C5E3-41D5-823D-1201EC3591A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
