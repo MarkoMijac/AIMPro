@@ -110,14 +110,14 @@ public class AIModel : IAIModel
         // Prepare base instrument data tensor from MeasurementSession
         var baseValues = session.BaseInstrumentData.Measurements.Select(m => m.Value).ToArray();
         var baseTensor = new DenseTensor<double>(baseValues, new[] { 1, baseValues.Length });
-        inputs.Add(NamedOnnxValue.CreateFromTensor("BaseInstrumentInput", baseTensor));
+        inputs.Add(NamedOnnxValue.CreateFromTensor(session.BaseInstrumentData.SourceName, baseTensor));
 
         // Prepare sensor data tensors from each TimeSeriesData in MeasurementSession.SensorDataSeries
         foreach (var sensorSeries in session.SensorDataSeries)
         {
             var sensorValues = sensorSeries.Measurements.Select(m => m.Value).ToArray();
             var sensorTensor = new DenseTensor<double>(sensorValues, new[] { 1, sensorValues.Length });
-            inputs.Add(NamedOnnxValue.CreateFromTensor(sensorSeries.SourceName, sensorTensor));
+            inputs.Add(NamedOnnxValue.CreateFromTensor(sensorSeries.SourceName, sensorTensor));            
         }
 
         return inputs;
