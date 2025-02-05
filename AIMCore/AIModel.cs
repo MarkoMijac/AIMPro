@@ -65,7 +65,7 @@ public class AIModel : IAIModel
 
         using (var results = _model.Run(inputTensors))
         {
-            var outputValues = results.First().AsEnumerable<float>().ToArray();
+            var outputValues = results.First().AsEnumerable<double>().ToArray();
             
             // Assuming the model outputs a single corrected value and confidence score
             return new PredictionResult
@@ -87,7 +87,7 @@ public class AIModel : IAIModel
     
         using (var results = await Task.Run(() => _model.Run(inputTensors)))
         {
-            var outputValues = results.First().AsEnumerable<float>().ToArray();
+            var outputValues = results.First().AsEnumerable<double>().ToArray();
             
             // Assuming the model outputs a single corrected value and confidence score
             return new PredictionResult
@@ -105,20 +105,17 @@ public class AIModel : IAIModel
 
     private List<NamedOnnxValue> PrepareInputTensors(MeasurementSession session)
     {
-        var inputs = new List<NamedOnnxValue>();
-
-        // Prepare base instrument data tensor from MeasurementSession
+        // Combine base instrument data and sensor data into a single array
         var baseValues = session.BaseInstrumentData.Measurements.Select(m => m.Value).ToArray();
-        var baseTensor = new DenseTensor<double>(baseValues, new[] { 1, baseValues.Length });
-        inputs.Add(NamedOnnxValue.CreateFromTensor(session.BaseInstrumentData.SourceName, baseTensor));
+        var sensorValues = session.SensorDataSeries.SelectMany(s => s.Measurements.Select(m => m.Value)).ToArray();
+        var combinedValues = baseValues.Concat(sensorValues).ToArray();
 
-        // Prepare sensor data tensors from each TimeSeriesData in MeasurementSession.SensorDataSeries
-        foreach (var sensorSeries in session.SensorDataSeries)
+        // Create a single tensor from the combined values
+        var combinedTensor = new DenseTensor<double>(combinedValues, new[] { 1, combinedValues.Length });
+        var inputs = new List<NamedOnnxValue>
         {
-            var sensorValues = sensorSeries.Measurements.Select(m => m.Value).ToArray();
-            var sensorTensor = new DenseTensor<double>(sensorValues, new[] { 1, sensorValues.Length });
-            inputs.Add(NamedOnnxValue.CreateFromTensor(sensorSeries.SourceName, sensorTensor));            
-        }
+            NamedOnnxValue.CreateFromTensor(session.BaseInstrumentData.SourceName, combinedTensor)
+        };
 
         return inputs;
     }
