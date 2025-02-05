@@ -65,13 +65,12 @@ public class AIModel : IAIModel
 
         using (var results = _model.Run(inputTensors))
         {
-            var outputValues = results.First().AsEnumerable<double>().ToArray();
+            var outputValues = results.First().AsEnumerable<float>().ToArray();
             
-            // Assuming the model outputs a single corrected value and confidence score
+            // Assuming the model outputs a single corrected value
             return new PredictionResult
             {
-                CorrectedMeasurement = outputValues[0],
-                ConfidenceScore = outputValues[1]
+                CorrectedMeasurement = outputValues[0]
             };
         }
     }
@@ -106,12 +105,12 @@ public class AIModel : IAIModel
     private List<NamedOnnxValue> PrepareInputTensors(MeasurementSession session)
     {
         // Combine base instrument data and sensor data into a single array
-        var baseValues = session.BaseInstrumentData.Measurements.Select(m => m.Value).ToArray();
-        var sensorValues = session.SensorDataSeries.SelectMany(s => s.Measurements.Select(m => m.Value)).ToArray();
+        var baseValues = session.BaseInstrumentData.Measurements.Select(m => (float)m.Value).ToArray();
+        var sensorValues = session.SensorDataSeries.SelectMany(s => s.Measurements.Select(m => (float)m.Value)).ToArray();
         var combinedValues = baseValues.Concat(sensorValues).ToArray();
 
         // Create a single tensor from the combined values
-        var combinedTensor = new DenseTensor<double>(combinedValues, new[] { 1, combinedValues.Length });
+        var combinedTensor = new DenseTensor<float>(combinedValues, new[] { 1, combinedValues.Length });
         var inputs = new List<NamedOnnxValue>
         {
             NamedOnnxValue.CreateFromTensor(session.BaseInstrumentData.SourceName, combinedTensor)
