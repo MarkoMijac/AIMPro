@@ -2,3 +2,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("AIMCoreUnitTests")]
+[assembly: InternalsVisibleTo("AIMCore.IntegrationTests")]

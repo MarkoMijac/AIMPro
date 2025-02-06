@@ -56,7 +56,10 @@ public class AIModel : IAIModel
 
     public IPredictionResult Predict(MeasurementSession session)
     {
-        ValidateSession(session);
+        if(session==null || session.IsValid()==false)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
 
         var inputTensors = PrepareInputTensors(session);
 
@@ -72,37 +75,12 @@ public class AIModel : IAIModel
         }
     }
 
-    private static void ValidateSession(MeasurementSession session)
-    {
-        if (session == null)
-        {
-            throw new AIMInvalidSessionDataException();
-        }
-        else if(session.BaseInstrumentData == null)
-        {
-            throw new AIMInvalidSessionDataException();
-        }
-        else if(session.BaseInstrumentData.Measurements == null)
-        {
-            throw new AIMInvalidSessionDataException();
-        }
-        else if(session.BaseInstrumentData.Measurements.Count == 0)
-        {
-            throw new AIMInvalidSessionDataException();
-        }
-        else if(session.SensorDataSeries == null)
-        {
-            throw new AIMInvalidSessionDataException();
-        }
-        else if(session.SensorDataSeries.Count == 0)
-        {
-            throw new AIMInvalidSessionDataException();
-        }
-    }
-
     public async Task<IPredictionResult> PredictAsync(MeasurementSession session)
     {
-        ValidateSession(session);
+        if(session==null || session.IsValid()==false)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
     
         var inputTensors = await PrepareInputTensorsAsync(session);
     
