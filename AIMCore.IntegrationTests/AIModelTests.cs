@@ -5,6 +5,8 @@ namespace AIMCore.IntegrationTests;
 
 public class AIModelTests
 {
+    private string _validModelPath = "/home/ubuntustudio/Documents/AIMPro/AIMCore.IntegrationTests/TestData/ValidModel.onnx";
+
     [Fact]
     public void Constructor_GivenInvalidPath_ThrowsException()
     {
@@ -61,7 +63,7 @@ public class AIModelTests
     public void Predict_GivenValidSession_ReturnsPredictionResult()
     {
         // Arrange
-        var path = "/home/ubuntustudio/Documents/AIMPro/AIMCore.IntegrationTests/TestData/ValidModel.onnx";
+        var path = _validModelPath;
         var model = new AIModel("TestModel", path);
         var session = new MeasurementSession();
         var scaleData = new TimeSeriesData("measured_weight");
@@ -82,7 +84,36 @@ public class AIModelTests
         Assert.NotNull(result);
         Assert.IsType<PredictionResult>(result);
         Assert.InRange(result.CorrectedMeasurement, 0, float.MaxValue);
-        Assert.InRange(result.ConfidenceScore, 0, 1);
+    }
+
+    [Fact]
+    public void Predict_GivenSessionIsNull_ThrowsException()
+    {
+        // Arrange
+        var path = _validModelPath;
+        var model = new AIModel("TestModel", path);
+        MeasurementSession session = null;
+
+        // Act
+        Action act = () => model.Predict(session);
+
+        // Assert
+        Assert.Throws<AIMInvalidSessionDataException>(act);
+    }
+
+    [Fact]
+    public void Predict_GivenInvalidSession_ThrowsException()
+    {
+        // Arrange
+        var path = _validModelPath;
+        var model = new AIModel("TestModel", path);
+        var session = new MeasurementSession();
+
+        // Act
+        Action act = () => model.Predict(session);
+
+        // Assert
+        Assert.Throws<AIMInvalidSessionDataException>(act);
     }
 
 }

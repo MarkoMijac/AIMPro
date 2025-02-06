@@ -56,17 +56,14 @@ public class AIModel : IAIModel
 
     public IPredictionResult Predict(MeasurementSession session)
     {
-        if(session == null)
-        {
-            throw new AIMInvalidSessionDataException();
-        }
+        ValidateSession(session);
 
         var inputTensors = PrepareInputTensors(session);
 
         using (var results = _model.Run(inputTensors))
         {
             var outputValues = results.First().AsEnumerable<float>().ToArray();
-            
+
             // Assuming the model outputs a single corrected value
             return new PredictionResult
             {
@@ -75,12 +72,37 @@ public class AIModel : IAIModel
         }
     }
 
-    public async Task<IPredictionResult> PredictAsync(MeasurementSession session)
+    private static void ValidateSession(MeasurementSession session)
     {
-        if(session == null)
+        if (session == null)
         {
             throw new AIMInvalidSessionDataException();
         }
+        else if(session.BaseInstrumentData == null)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
+        else if(session.BaseInstrumentData.Measurements == null)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
+        else if(session.BaseInstrumentData.Measurements.Count == 0)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
+        else if(session.SensorDataSeries == null)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
+        else if(session.SensorDataSeries.Count == 0)
+        {
+            throw new AIMInvalidSessionDataException();
+        }
+    }
+
+    public async Task<IPredictionResult> PredictAsync(MeasurementSession session)
+    {
+        ValidateSession(session);
     
         var inputTensors = await PrepareInputTensorsAsync(session);
     
