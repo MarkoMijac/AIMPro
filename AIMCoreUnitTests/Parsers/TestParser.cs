@@ -11,9 +11,9 @@ public class TestParser : MeasurementParser<string>
         Name = name;
     }
 
-    public override TimeSeriesData Parse(string data)
+    public override Measurement Parse(string data)
     {
-        return new TimeSeriesData("Test source");
+        return new Measurement("Test source", 2, DateTime.Now);
     }
 
 }

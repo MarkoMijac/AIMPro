@@ -11,25 +11,14 @@ public class VibrationMeasurementParser : MeasurementParser<string>
         Name = "Vibration Parser";
     }
 
-    public override TimeSeriesData Parse(string data)
+    public override Measurement Parse(string data)
     {
-        var timeSeries = new TimeSeriesData("VibrationMeasurement");
-        var dataPoints = data.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+        var dataPoints = data.Split(';');
 
-        foreach (var point in dataPoints)
-        {
-            var parts = point.Split(';');
-            if (parts.Length == 2 && DateTime.TryParse(parts[0].Trim(), out var timestamp) && float.TryParse(parts[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var vibration))
-            {
-                timeSeries.AddMeasurement(new Measurement(vibration, timestamp));
-            }
-            else
-            {
-                throw new FormatException($"Invalid data format: '{point}'");
-            }
-        }
+        DateTime.TryParse(dataPoints[0].Trim(), out var timestamp);
+        float.TryParse(dataPoints[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var vibration);
 
-        // Return all measurements as a TimeSeriesData object
-        return timeSeries;
+        var measurement = new Measurement("vibration_rate", vibration, timestamp);
+        return measurement;
     }
 }

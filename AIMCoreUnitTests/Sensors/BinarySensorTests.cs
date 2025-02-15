@@ -287,8 +287,7 @@ public class BinarySensorTests
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
-        var data = new TimeSeriesData("Thermometer");
-        data.AddMeasurement(new Measurement(25.0, DateTime.Now));
+        var data = new Measurement("Thermometer", 25.0, DateTime.Now);
 
         A.CallTo(() => communication.Receive()).Returns(resultArray);
         A.CallTo(() => parser.Parse(resultArray)).Returns(data);
@@ -306,8 +305,7 @@ public class BinarySensorTests
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
-        var data = new TimeSeriesData("Thermometer");
-        data.AddMeasurement(new Measurement(25.0, DateTime.Now));
+        var data = new Measurement("Thermometer", 25.0, DateTime.Now);
 
         A.CallTo(() => communication.ReceiveAsync()).Returns(resultArray);
         A.CallTo(() => parser.Parse(resultArray)).Returns(data);

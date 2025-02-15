@@ -11,25 +11,14 @@ public class ScaleMeasurementParser : MeasurementParser<string>
         Name = "Scale Parser";
     }
 
-    public override TimeSeriesData Parse(string data)
+    public override Measurement Parse(string data)
     {
-        var timeSeries = new TimeSeriesData("measured_weight");
-        var dataPoints = data.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+        var dataPoints = data.Split(';');
 
-        foreach (var point in dataPoints)
-        {
-            var parts = point.Split(';');
-            if (parts.Length == 2 && DateTime.TryParse(parts[0].Trim(), out var timestamp) && float.TryParse(parts[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var weight))
-            {
-                timeSeries.AddMeasurement(new Measurement(weight, timestamp));
-            }
-            else
-            {
-                throw new FormatException($"Invalid data format: '{point}'");
-            }
-        }
+        DateTime.TryParse(dataPoints[0].Trim(), out var timestamp);
+        float.TryParse(dataPoints[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var weight);
 
-        // Return all measurements as a TimeSeriesData object
-        return timeSeries;
+        var measurement = new Measurement("measured_weight", weight, timestamp);
+        return measurement;
     }
 }

@@ -105,15 +105,15 @@ public class AIModel : IAIModel
     private List<NamedOnnxValue> PrepareInputTensors(MeasurementSession session)
     {
         // Combine base instrument data and sensor data into a single array
-        var baseValues = session.BaseInstrumentData.Measurements.Select(m => (float)m.Value).ToArray();
-        var sensorValues = session.SensorDataSeries.SelectMany(s => s.Measurements.Select(m => (float)m.Value)).ToArray();
-        var combinedValues = baseValues.Concat(sensorValues).ToArray();
+        var baseValue = session.BaseInstrumentData.Value;
+        var sensorValues = session.SensorDataSeries.Select(sensorData => (float)sensorData.Value).ToArray();
+        var combinedValues = sensorValues.Prepend((float)baseValue).ToArray();
 
         // Create a single tensor from the combined values
         var combinedTensor = new DenseTensor<float>(combinedValues, new[] { 1, combinedValues.Length });
         var inputs = new List<NamedOnnxValue>
         {
-            NamedOnnxValue.CreateFromTensor(session.BaseInstrumentData.SourceName, combinedTensor)
+            NamedOnnxValue.CreateFromTensor(session.BaseInstrumentData.Name, combinedTensor)
         };
 
         return inputs;

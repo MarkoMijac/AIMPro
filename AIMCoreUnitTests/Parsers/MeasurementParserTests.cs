@@ -31,7 +31,7 @@ public class MeasurementParserTests
         var result = _testParser.Parse("Test data");
 
         //Assert
-        Assert.IsType<TimeSeriesData>(result);
-        Assert.Equal("Test source", result.SourceName);
+        Assert.IsType<Measurement>(result);
+        Assert.Equal("Test source", result.Name);
     }
 }

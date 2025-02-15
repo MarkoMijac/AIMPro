@@ -285,8 +285,7 @@ public class StringSensorTests
     public void StopReading_GivenReadingIsStarted_ShouldReturnParsedData()
     {
         // Arrange
-        var data = new TimeSeriesData("Thermometer");
-        data.AddMeasurement(new Measurement(25.0, DateTime.Now));
+        var data = new Measurement("Thermometer", 25.0, DateTime.Now);
 
         A.CallTo(() => communication.Receive()).Returns("25.0");
         A.CallTo(() => parser.Parse("25.0")).Returns(data);
@@ -303,8 +302,7 @@ public class StringSensorTests
     public async Task StopReadingAsync_GivenReadingIsStarted_ShouldReturnParsedData()
     {
         // Arrange
-        var data = new TimeSeriesData("Thermometer");
-        data.AddMeasurement(new Measurement(25.0, DateTime.Now));
+       var data = new Measurement("Thermometer", 25.0, DateTime.Now);
 
         A.CallTo(() => communication.ReceiveAsync()).Returns("25.0");
         A.CallTo(() => parser.Parse("25.0")).Returns(data);

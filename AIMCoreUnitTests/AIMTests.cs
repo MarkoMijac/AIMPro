@@ -43,20 +43,17 @@ public class AIMTests
         configuration.Sensors.Add(A.Fake<ISensor>());
 
         var baseInstrument = configuration.BaseInstrument;
-        var baseInstrumentTestData = new TimeSeriesData("Base Instrument");
-        baseInstrumentTestData.AddMeasurement(new Measurement(1, DateTime.Now));
+        var baseInstrumentTestData = new Measurement("weight", 1, DateTime.Now);
         A.CallTo(() => baseInstrument.StopReading()).Returns(baseInstrumentTestData);
         A.CallTo(() => baseInstrument.StopReadingAsync()).Returns(baseInstrumentTestData);
 
         var sensor1 = configuration.Sensors[0];
-        var sensor1TestData = new TimeSeriesData("Sensor 1");
-        sensor1TestData.AddMeasurement(new Measurement(2, DateTime.Now));
+        var sensor1TestData = new Measurement("Sensor 1 data", 2, DateTime.Now);
         A.CallTo(() => sensor1.StopReading()).Returns(sensor1TestData);
         A.CallTo(() => sensor1.StopReadingAsync()).Returns(sensor1TestData);
 
         var sensor2 = configuration.Sensors[1];
-        var sensor2TestData = new TimeSeriesData("Sensor 2");
-        sensor2TestData.AddMeasurement(new Measurement(3, DateTime.Now));
+        var sensor2TestData = new Measurement("Sensor 2 data", 3, DateTime.Now);
         A.CallTo(() => sensor2.StopReading()).Returns(sensor2TestData);
         A.CallTo(() => sensor2.StopReadingAsync()).Returns(sensor2TestData);
 
@@ -531,14 +528,9 @@ public class AIMTests
         // Assert
         Assert.NotNull(session);
         Assert.NotNull(session.BaseInstrumentData);
-        Assert.NotEmpty(session.BaseInstrumentData.Measurements);
 
         Assert.NotNull(session.SensorDataSeries);
         Assert.NotEmpty(session.SensorDataSeries);
-        Assert.All(session.SensorDataSeries, data =>
-        {
-            Assert.NotEmpty(data.Measurements);
-        });
     }
 
     [Fact]
@@ -556,14 +548,9 @@ public class AIMTests
         // Assert
         Assert.NotNull(session);
         Assert.NotNull(session.BaseInstrumentData);
-        Assert.NotEmpty(session.BaseInstrumentData.Measurements);
 
         Assert.NotNull(session.SensorDataSeries);
         Assert.NotEmpty(session.SensorDataSeries);
-        Assert.All(session.SensorDataSeries, data =>
-        {
-            Assert.NotEmpty(data.Measurements);
-        });
     }
 
     [Fact]
