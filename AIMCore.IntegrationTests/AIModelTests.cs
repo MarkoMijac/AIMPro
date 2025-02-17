@@ -66,13 +66,22 @@ public class AIModelTests
         var path = _validModelPath;
         var model = new AIModel("TestModel", path);
         var session = new MeasurementSession();
-        var measuredWeight = new Measurement("measured_weight", 20.0, DateTime.Now);
-        var vibrationRate = new Measurement("vibration_rate", 1.2, DateTime.Now);
-        var inclineAngle = new Measurement("incline_angle", 0.5, DateTime.Now);
+        var scaleReading = new SensorReading("Scale sensor");
+        scaleReading.AddMeasurement("weight", 20.0f);
+        scaleReading.TimeStamp = DateTime.Now;
 
-        session.SetInstrumentData(measuredWeight);
-        session.AddSensorData(vibrationRate);
-        session.AddSensorData(inclineAngle);
+        var vibrationSensorReading = new SensorReading("Vibration sensor");
+        vibrationSensorReading.AddMeasurement("vibrationRate", 1.2f);
+        vibrationSensorReading.TimeStamp = DateTime.Now;
+
+
+        var gyroscopeReading = new SensorReading("Gyroscope");
+        gyroscopeReading.AddMeasurement("angle", 0.5f);
+        gyroscopeReading.TimeStamp = DateTime.Now;
+
+        session.SetInstrumentData(scaleReading);
+        session.AddSensorData(vibrationSensorReading);
+        session.AddSensorData(gyroscopeReading);
 
         // Act
         var result = model.Predict(session);

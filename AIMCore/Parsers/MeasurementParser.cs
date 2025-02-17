@@ -6,7 +6,7 @@ public abstract class MeasurementParser<T> : IMeasurementParser<T>
 {
     public string Name {get; protected set;}
 
-    public abstract Measurement Parse(T data);
+    public abstract SensorReading Parse(T data);
 
     public override string ToString()
     {

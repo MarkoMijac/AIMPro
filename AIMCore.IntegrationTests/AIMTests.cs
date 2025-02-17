@@ -114,16 +114,16 @@ public class AIMTests
 
         // Assert
         Assert.NotNull(session);
-        Assert.NotNull(session.BaseInstrumentData);
-        Assert.True(session.BaseInstrumentData!= null);
-        Assert.InRange(session.BaseInstrumentData.Value, 19, 22);
+        Assert.NotNull(session.BaseInstrumentReading);
+        Assert.True(session.BaseInstrumentReading!= null);
+        Assert.InRange(session.BaseInstrumentReading.Measurements.First().Value, 19, 22);
 
-        Assert.NotNull(session.SensorDataSeries);
-        Assert.True(session.SensorDataSeries.Count == 2);
-        Assert.True(session.SensorDataSeries[0] != null);
-        Assert.InRange(session.SensorDataSeries[0].Value, 0, 2);
-        Assert.True(session.SensorDataSeries[1]!= null);
-        Assert.InRange(session.SensorDataSeries[1].Value, 0, 30);
+        Assert.NotNull(session.SensorsReadings);
+        Assert.True(session.SensorsReadings.Count == 2);
+        Assert.True(session.SensorsReadings[0] != null);
+        Assert.InRange(session.SensorsReadings[0].Measurements.First().Value, 0, 2);
+        Assert.True(session.SensorsReadings[1]!= null);
+        Assert.InRange(session.SensorsReadings[1].Measurements.First().Value, 0, 30);
     }
 
     [Fact]

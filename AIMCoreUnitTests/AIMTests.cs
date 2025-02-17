@@ -43,19 +43,28 @@ public class AIMTests
         configuration.Sensors.Add(A.Fake<ISensor>());
 
         var baseInstrument = configuration.BaseInstrument;
-        var baseInstrumentTestData = new Measurement("weight", 1, DateTime.Now);
-        A.CallTo(() => baseInstrument.StopReading()).Returns(baseInstrumentTestData);
-        A.CallTo(() => baseInstrument.StopReadingAsync()).Returns(baseInstrumentTestData);
+        var baseInstrumentReading = new SensorReading("Scale reading");
+        baseInstrumentReading.AddMeasurement("weight", 1);
+        baseInstrumentReading.TimeStamp = DateTime.Now;
+
+        A.CallTo(() => baseInstrument.StopReading()).Returns(baseInstrumentReading);
+        A.CallTo(() => baseInstrument.StopReadingAsync()).Returns(baseInstrumentReading);
 
         var sensor1 = configuration.Sensors[0];
-        var sensor1TestData = new Measurement("Sensor 1 data", 2, DateTime.Now);
-        A.CallTo(() => sensor1.StopReading()).Returns(sensor1TestData);
-        A.CallTo(() => sensor1.StopReadingAsync()).Returns(sensor1TestData);
+        var sensorOneReading = new SensorReading("Sensor 1 reading");
+        sensorOneReading.AddMeasurement("vibrationRate", 2);
+        sensorOneReading.TimeStamp = DateTime.Now;
+
+        A.CallTo(() => sensor1.StopReading()).Returns(sensorOneReading);
+        A.CallTo(() => sensor1.StopReadingAsync()).Returns(sensorOneReading);
 
         var sensor2 = configuration.Sensors[1];
-        var sensor2TestData = new Measurement("Sensor 2 data", 3, DateTime.Now);
-        A.CallTo(() => sensor2.StopReading()).Returns(sensor2TestData);
-        A.CallTo(() => sensor2.StopReadingAsync()).Returns(sensor2TestData);
+        var sensorTwoReading = new SensorReading("Sensor 2 reading");
+        sensorTwoReading.AddMeasurement("incline", 3);
+        sensorTwoReading.TimeStamp = DateTime.Now;
+
+        A.CallTo(() => sensor2.StopReading()).Returns(sensorTwoReading);
+        A.CallTo(() => sensor2.StopReadingAsync()).Returns(sensorTwoReading);
 
         return configuration;
     }
@@ -527,10 +536,10 @@ public class AIMTests
 
         // Assert
         Assert.NotNull(session);
-        Assert.NotNull(session.BaseInstrumentData);
+        Assert.NotNull(session.BaseInstrumentReading);
 
-        Assert.NotNull(session.SensorDataSeries);
-        Assert.NotEmpty(session.SensorDataSeries);
+        Assert.NotNull(session.SensorsReadings);
+        Assert.NotEmpty(session.SensorsReadings);
     }
 
     [Fact]
@@ -547,10 +556,10 @@ public class AIMTests
 
         // Assert
         Assert.NotNull(session);
-        Assert.NotNull(session.BaseInstrumentData);
+        Assert.NotNull(session.BaseInstrumentReading);
 
-        Assert.NotNull(session.SensorDataSeries);
-        Assert.NotEmpty(session.SensorDataSeries);
+        Assert.NotNull(session.SensorsReadings);
+        Assert.NotEmpty(session.SensorsReadings);
     }
 
     [Fact]

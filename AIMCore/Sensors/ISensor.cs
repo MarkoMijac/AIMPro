@@ -8,11 +8,11 @@ public interface ISensor
     void Connect();
     void Disconnect();
     void StartReading();
-    Measurement StopReading();
+    SensorReading StopReading();
 
     Task ConnectAsync();
     Task DisconnectAsync();
     Task StartReadingAsync();
-    Task<Measurement> StopReadingAsync();
+    Task<SensorReading> StopReadingAsync();
     bool IsConnected { get; }
 }

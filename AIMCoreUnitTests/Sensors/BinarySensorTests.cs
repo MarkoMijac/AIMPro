@@ -287,17 +287,19 @@ public class BinarySensorTests
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
-        var data = new Measurement("Thermometer", 25.0, DateTime.Now);
+        var reading = new SensorReading("Thermometer");
+        reading.AddMeasurement("Temperature", 25.0f);
+        reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.Receive()).Returns(resultArray);
-        A.CallTo(() => parser.Parse(resultArray)).Returns(data);
+        A.CallTo(() => parser.Parse(resultArray)).Returns(reading);
         sensor.StartReading();
 
         // Act
         var actual = sensor.StopReading();
 
         // Assert
-        Assert.Equal(actual, data);
+        Assert.Equal(actual, reading);
     }
 
     [Fact]
@@ -305,17 +307,19 @@ public class BinarySensorTests
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
-        var data = new Measurement("Thermometer", 25.0, DateTime.Now);
+        var reading = new SensorReading("Thermometer");
+        reading.AddMeasurement("Temperature", 25.0f);
+        reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.ReceiveAsync()).Returns(resultArray);
-        A.CallTo(() => parser.Parse(resultArray)).Returns(data);
+        A.CallTo(() => parser.Parse(resultArray)).Returns(reading);
         sensor.StartReading();
 
         // Act
         var actual = await sensor.StopReadingAsync();
 
         // Assert
-        Assert.Equal(actual, data);
+        Assert.Equal(actual, reading);
     }
 
     [Fact]

@@ -285,34 +285,38 @@ public class StringSensorTests
     public void StopReading_GivenReadingIsStarted_ShouldReturnParsedData()
     {
         // Arrange
-        var data = new Measurement("Thermometer", 25.0, DateTime.Now);
+        var reading = new SensorReading("Thermometer");
+        reading.AddMeasurement("Temperature", 25.0f);
+        reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.Receive()).Returns("25.0");
-        A.CallTo(() => parser.Parse("25.0")).Returns(data);
+        A.CallTo(() => parser.Parse("25.0")).Returns(reading);
         sensor.StartReading();
 
         // Act
         var actual = sensor.StopReading();
 
         // Assert
-        Assert.Equal(actual, data);
+        Assert.Equal(actual, reading);
     }
 
     [Fact]
     public async Task StopReadingAsync_GivenReadingIsStarted_ShouldReturnParsedData()
     {
         // Arrange
-       var data = new Measurement("Thermometer", 25.0, DateTime.Now);
+       var reading = new SensorReading("Thermometer");
+       reading.AddMeasurement("Temperature", 25.0f);
+       reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.ReceiveAsync()).Returns("25.0");
-        A.CallTo(() => parser.Parse("25.0")).Returns(data);
+        A.CallTo(() => parser.Parse("25.0")).Returns(reading);
         sensor.StartReading();
 
         // Act
         var actual = await sensor.StopReadingAsync();
 
         // Assert
-        Assert.Equal(actual, data);
+        Assert.Equal(actual, reading);
     }
 
     [Fact]

@@ -11,14 +11,16 @@ public class VibrationMeasurementParser : MeasurementParser<string>
         Name = "Vibration Parser";
     }
 
-    public override Measurement Parse(string data)
+    public override SensorReading Parse(string data)
     {
         var dataPoints = data.Split(';');
 
         DateTime.TryParse(dataPoints[0].Trim(), out var timestamp);
         float.TryParse(dataPoints[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var vibration);
 
-        var measurement = new Measurement("vibration_rate", vibration, timestamp);
-        return measurement;
+        var reading = new SensorReading("Vibration reading");
+        reading.AddMeasurement("vibrationRate", vibration);
+        reading.TimeStamp = timestamp;
+        return reading;
     }
 }

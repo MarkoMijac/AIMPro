@@ -93,7 +93,7 @@ public abstract class SensorBase<T> : ISensor
         await CommunicationStrategy.SendAsync(RequestCommand);
     }
     
-    public virtual Measurement StopReading()
+    public virtual SensorReading StopReading()
     {
         if(IsReading == false)
         {
@@ -104,7 +104,7 @@ public abstract class SensorBase<T> : ISensor
         IsReading = false;
         return Parser.Parse(data);
     }
-    public virtual async Task<Measurement> StopReadingAsync()
+    public virtual async Task<SensorReading> StopReadingAsync()
     {
         if(IsReading == false)
         {

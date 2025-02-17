@@ -4,17 +4,17 @@ namespace AIMCore;
 
 public class MeasurementSession
 {
-    public Measurement BaseInstrumentData { get; private set; }
-    public List<Measurement> SensorDataSeries { get; private set; } = new List<Measurement>();
+    public SensorReading BaseInstrumentReading { get; private set; }
+    public List<SensorReading> SensorsReadings { get; private set; } = new List<SensorReading>();
 
-    public void SetInstrumentData(Measurement data)
+    public void SetInstrumentData(SensorReading reading)
     {
-        BaseInstrumentData = data;
+        BaseInstrumentReading = reading;
     }
 
-    public void AddSensorData(Measurement data)
+    public void AddSensorData(SensorReading reading)
     {
-        SensorDataSeries.Add(data);
+        SensorsReadings.Add(reading);
     }
 
     public bool IsValid()
@@ -24,11 +24,11 @@ public class MeasurementSession
 
     private bool IsBaseInstrumentDataValid()
     {
-        return BaseInstrumentData != null;
+        return BaseInstrumentReading != null;
     }
 
     private bool AreSensorDataSeriesValid()
     {
-        return SensorDataSeries.Count > 0 && SensorDataSeries.All(sensorData => sensorData != null);
+        return SensorsReadings.Count > 0 && SensorsReadings.All(reading => reading != null);
     }
 }

@@ -11,14 +11,16 @@ public class ScaleMeasurementParser : MeasurementParser<string>
         Name = "Scale Parser";
     }
 
-    public override Measurement Parse(string data)
+    public override SensorReading Parse(string data)
     {
         var dataPoints = data.Split(';');
 
         DateTime.TryParse(dataPoints[0].Trim(), out var timestamp);
         float.TryParse(dataPoints[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var weight);
 
-        var measurement = new Measurement("measured_weight", weight, timestamp);
-        return measurement;
+        var reading = new SensorReading("Scale");
+        reading.AddMeasurement("weight", weight);
+        reading.TimeStamp = timestamp;
+        return reading;
     }
 }

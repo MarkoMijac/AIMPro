@@ -11,9 +11,12 @@ public class TestParser : MeasurementParser<string>
         Name = name;
     }
 
-    public override Measurement Parse(string data)
+    public override SensorReading Parse(string data)
     {
-        return new Measurement("Test source", 2, DateTime.Now);
+        var reading = new SensorReading("Test source");
+        reading.AddMeasurement("Test data", 2);
+        reading.TimeStamp = DateTime.Now;
+        return reading;
     }
 
 }
