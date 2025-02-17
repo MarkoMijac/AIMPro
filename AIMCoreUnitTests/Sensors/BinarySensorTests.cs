@@ -3,7 +3,7 @@ using System.Text;
 using AIMCore;
 using AIMCore.Communication;
 using AIMCore.Exceptions;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 using AIMCore.Sensors;
 using FakeItEasy;
 
@@ -13,15 +13,15 @@ public class BinarySensorTests
 {
     private BinarySensor sensor;
     private ICommunicationStrategy<byte[]> communication;
-    private IMeasurementParser<byte[]> parser;
+    private IReadingConverter<byte[]> converter;
 
     private byte[] getTempRequest = new byte[] { 0x47, 0x45, 0x54, 0x5F, 0x54, 0x45, 0x4D, 0x50 };
 
     public BinarySensorTests()
     {
         communication = A.Fake<CommunicationStrategy<byte[]>>();
-        parser = A.Fake<MeasurementParser<byte[]>>();
-        sensor = new BinarySensor("Thermometer",getTempRequest, communication, parser);
+        converter = A.Fake<ReadingConverterBase<byte[]>>();
+        sensor = new BinarySensor("Thermometer",getTempRequest, communication, converter);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class BinarySensorTests
         string emptyName = string.Empty;
 
         // Act
-        Action act = () => new BinarySensor(emptyName, getTempRequest, communication, parser);
+        Action act = () => new BinarySensor(emptyName, getTempRequest, communication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -44,7 +44,7 @@ public class BinarySensorTests
         byte[] nullRequestCommand = null;
 
         // Act
-        Action act = () => new BinarySensor("Thermometer", nullRequestCommand, communication, parser);
+        Action act = () => new BinarySensor("Thermometer", nullRequestCommand, communication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -57,7 +57,7 @@ public class BinarySensorTests
         byte[] requestCommand = new byte[0];
 
         // Act
-        Action act = () => new BinarySensor("Thermometer", requestCommand, communication, parser);
+        Action act = () => new BinarySensor("Thermometer", requestCommand, communication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -70,20 +70,20 @@ public class BinarySensorTests
         ICommunicationStrategy<byte[]> nullCommunication = null;
 
         // Act
-        Action act = () => new BinarySensor("Thermometer", getTempRequest, nullCommunication, parser);
+        Action act = () => new BinarySensor("Thermometer", getTempRequest, nullCommunication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
     }
 
     [Fact]
-    public void Constructor_GivenParserIsNull_ThrowsException()
+    public void Constructor_GivenConverterIsNull_ThrowsException()
     {
         // Arrange
-        IMeasurementParser<byte[]> nullParser = null;
+        IReadingConverter<byte[]> nullConverter = null;
 
         // Act
-        Action act = () => new BinarySensor("Thermometer", getTempRequest, communication, nullParser);
+        Action act = () => new BinarySensor("Thermometer", getTempRequest, communication, nullConverter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -96,13 +96,13 @@ public class BinarySensorTests
         string sensorName = "Thermometer";
 
         // Act
-        var sensor = new BinarySensor(sensorName, getTempRequest, communication, parser);
+        var sensor = new BinarySensor(sensorName, getTempRequest, communication, converter);
 
         // Assert
         Assert.Equal(sensorName, sensor.Name);
         Assert.Equal(getTempRequest, sensor.RequestCommand);
         Assert.Equal(communication, sensor.CommunicationStrategy);
-        Assert.Equal(parser, sensor.Parser);
+        Assert.Equal(converter, sensor.Converter);
     }
 
     [Fact]
@@ -143,15 +143,15 @@ public class BinarySensorTests
     }
 
     [Fact]
-    public void GetParser_GivenParserIsSet_ReturnsParser()
+    public void GetConverter_GivenConverterIsSet_ReturnsConverter()
     {
         // Arrange
 
         // Act
-        var actual = sensor.Parser;
+        var actual = sensor.Converter;
 
         // Assert
-        Assert.Equal(parser, actual);
+        Assert.Equal(converter, actual);
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public class BinarySensorTests
     }
 
     [Fact]
-    public void StopReading_GivenReadingIsStarted_InvokesParserParse()
+    public void StopReading_GivenReadingIsStarted_InvokesConverterConvert()
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
@@ -251,7 +251,7 @@ public class BinarySensorTests
         sensor.StopReading();
 
         // Assert
-        A.CallTo(() => sensor.Parser.Parse(resultArray)).MustHaveHappened();
+        A.CallTo(() => sensor.Converter.Convert(resultArray)).MustHaveHappened();
     }
 
     [Fact]
@@ -268,7 +268,7 @@ public class BinarySensorTests
     }
 
     [Fact]
-    public async Task StopReadingAsync_GivenReadingIsStarted_InvokesParserParse()
+    public async Task StopReadingAsync_GivenReadingIsStarted_InvokesConverterConvert()
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
@@ -279,11 +279,11 @@ public class BinarySensorTests
         await sensor.StopReadingAsync();
 
         // Assert
-        A.CallTo(() => sensor.Parser.Parse(resultArray)).MustHaveHappened();
+        A.CallTo(() => sensor.Converter.Convert(resultArray)).MustHaveHappened();
     }
 
     [Fact]
-    public void StopReading_GivenReadingIsStarted_ShouldReturnParsedData()
+    public void StopReading_GivenReadingIsStarted_ShouldReturnConvertedData()
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
@@ -292,7 +292,7 @@ public class BinarySensorTests
         reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.Receive()).Returns(resultArray);
-        A.CallTo(() => parser.Parse(resultArray)).Returns(reading);
+        A.CallTo(() => converter.Convert(resultArray)).Returns(reading);
         sensor.StartReading();
 
         // Act
@@ -303,7 +303,7 @@ public class BinarySensorTests
     }
 
     [Fact]
-    public async Task StopReadingAsync_GivenReadingIsStarted_ShouldReturnParsedData()
+    public async Task StopReadingAsync_GivenReadingIsStarted_ShouldReturnConvertedData()
     {
         // Arrange
         var resultArray = Encoding.UTF8.GetBytes("25.0");
@@ -312,7 +312,7 @@ public class BinarySensorTests
         reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.ReceiveAsync()).Returns(resultArray);
-        A.CallTo(() => parser.Parse(resultArray)).Returns(reading);
+        A.CallTo(() => converter.Convert(resultArray)).Returns(reading);
         sensor.StartReading();
 
         // Act

@@ -1,17 +1,17 @@
 using System;
 using System.Globalization;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 
 namespace AIMCore.IntegrationTests.Utilities;
 
-public class VibrationMeasurementParser : MeasurementParser<string>
+public class VibrationReadingConverter : ReadingConverterBase<string>
 {
-    public VibrationMeasurementParser()
+    public VibrationReadingConverter()
     {
-        Name = "Vibration Parser";
+        Name = "Vibration Converter";
     }
 
-    public override SensorReading Parse(string data)
+    public override SensorReading Convert(string data)
     {
         var dataPoints = data.Split(';');
 

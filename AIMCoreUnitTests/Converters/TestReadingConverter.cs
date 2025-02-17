@@ -1,17 +1,17 @@
 using System;
 using AIMCore;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 
-namespace AIMCoreUnitTests.Parsers;
+namespace AIMCoreUnitTests.Converters;
 
-public class TestParser : MeasurementParser<string>
+public class TestReadingConverter : ReadingConverterBase<string>
 {
-    public TestParser(string name)
+    public TestReadingConverter(string name)
     {
         Name = name;
     }
 
-    public override SensorReading Parse(string data)
+    public override SensorReading Convert(string data)
     {
         var reading = new SensorReading("Test source");
         reading.AddMeasurement("Test data", 2);

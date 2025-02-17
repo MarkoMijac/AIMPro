@@ -1,21 +1,21 @@
 using System;
 using AIMCore.Communication;
 using AIMCore.Exceptions;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 
 namespace AIMCore.Sensors;
 
 public class BinarySensor : SensorBase<byte[]>
 {
-    public BinarySensor(string name, byte[] requestCommand, ICommunicationStrategy<byte[]> communicationStrategy, IMeasurementParser<byte[]> measurementParser)
-        : base(name, requestCommand, communicationStrategy, measurementParser)
+    public BinarySensor(string name, byte[] requestCommand, ICommunicationStrategy<byte[]> communicationStrategy, IReadingConverter<byte[]> readingConverter)
+        : base(name, requestCommand, communicationStrategy, readingConverter)
     {
         
     }
 
-    protected override void ValidateInput(string name, byte[]? requestCommand, ICommunicationStrategy<byte[]> communicationStrategy, IMeasurementParser<byte[]> parser)
+    protected override void ValidateInput(string name, byte[]? requestCommand, ICommunicationStrategy<byte[]> communicationStrategy, IReadingConverter<byte[]> readingConverter)
     {
-        base.ValidateInput(name, requestCommand, communicationStrategy, parser);
+        base.ValidateInput(name, requestCommand, communicationStrategy, readingConverter);
 
         if(requestCommand == null || requestCommand.Length == 0)
         {

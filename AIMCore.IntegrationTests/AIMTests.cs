@@ -21,21 +21,21 @@ public class AIMTests
 
         //Setting up base instrument
         var scaleStrategy = new ScaleCommunicationStrategy();
-        var scaleParser = new ScaleMeasurementParser();
-        var scale = new StringSensor("WeightScale", "GET_WEIGHT", scaleStrategy, scaleParser);
+        var scaleConverter = new ScaleReadingConverter();
+        var scale = new StringSensor("WeightScale", "GET_WEIGHT", scaleStrategy, scaleConverter);
         configuration.BaseInstrument = scale;
         
         //Setting up sensors
         //Setting up sensor 1
         var vibrationStrategy = new VibrationCommunicationStrategy();
-        var vibrationParser = new VibrationMeasurementParser();
-        var vibrationSensor = new StringSensor("VibrationSensor", "GET_VIBR", vibrationStrategy, vibrationParser);
+        var vibrationConverter = new VibrationReadingConverter();
+        var vibrationSensor = new StringSensor("VibrationSensor", "GET_VIBR", vibrationStrategy, vibrationConverter);
         configuration.Sensors.Add(vibrationSensor);
 
         //Setting up sensor 2
         var gyroscopeStrategy = new GyroscopeCommunicationStrategy();
-        var gyroscopeParser = new GyroscopeMeasurementParser();
-        var gyroscopeSensor = new StringSensor("GyroscopeSensor", "GET_INCLINE", gyroscopeStrategy, gyroscopeParser);
+        var gyroscopeConverter = new GyroscopeReadingConverter();
+        var gyroscopeSensor = new StringSensor("GyroscopeSensor", "GET_INCLINE", gyroscopeStrategy, gyroscopeConverter);
         configuration.Sensors.Add(gyroscopeSensor);
 
         return configuration;

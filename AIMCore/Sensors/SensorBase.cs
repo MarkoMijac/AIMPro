@@ -2,7 +2,7 @@ using System;
 using System.Net.Http.Headers;
 using AIMCore.Communication;
 using AIMCore.Exceptions;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 
 namespace AIMCore.Sensors;
 
@@ -12,24 +12,24 @@ public abstract class SensorBase<T> : ISensor
 
     public T RequestCommand { get; protected set; }
 
-    public IMeasurementParser<T> Parser { get; protected set; }
+    public IReadingConverter<T> Converter { get; protected set; }
 
     public bool IsReading { get; protected set; }
 
     public virtual bool IsConnected => CommunicationStrategy == null? false : CommunicationStrategy.IsConnected;
     public ICommunicationStrategy<T> CommunicationStrategy { get; protected set; }
-    protected SensorBase(string name, T requestCommand, ICommunicationStrategy<T> communicationStrategy, IMeasurementParser<T> parser)
+    protected SensorBase(string name, T requestCommand, ICommunicationStrategy<T> communicationStrategy, IReadingConverter<T> converter)
     {
-        ValidateInput(name, requestCommand, communicationStrategy, parser);
+        ValidateInput(name, requestCommand, communicationStrategy, converter);
         Name = name;
         RequestCommand = requestCommand;
         CommunicationStrategy = communicationStrategy;
-        Parser = parser;
+        Converter = converter;
 
         IsReading = false;
     }
 
-    protected virtual void ValidateInput(string name, T? requestCommand, ICommunicationStrategy<T> communicationStrategy, IMeasurementParser<T> parser)
+    protected virtual void ValidateInput(string name, T? requestCommand, ICommunicationStrategy<T> communicationStrategy, IReadingConverter<T> converter)
     {
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrEmpty(name))
         {
@@ -46,9 +46,9 @@ public abstract class SensorBase<T> : ISensor
             throw new AIMException("Communication strategy cannot be null.");
         }
 
-        if (parser == null)
+        if (converter == null)
         {
-            throw new AIMException("Parser cannot be null.");
+            throw new AIMException("Converter cannot be null.");
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class SensorBase<T> : ISensor
 
         T data = CommunicationStrategy.Receive();
         IsReading = false;
-        return Parser.Parse(data);
+        return Converter.Convert(data);
     }
     public virtual async Task<SensorReading> StopReadingAsync()
     {
@@ -113,6 +113,6 @@ public abstract class SensorBase<T> : ISensor
         
         T data = await CommunicationStrategy.ReceiveAsync();
         IsReading = false;
-        return Parser.Parse(data);
+        return Converter.Convert(data);
     }
 }

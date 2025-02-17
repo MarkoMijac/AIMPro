@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AIMCore;
 using AIMCore.Communication;
 using AIMCore.Exceptions;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 using AIMCore.Sensors;
 using FakeItEasy;
 
@@ -14,13 +14,13 @@ public class StringSensorTests
 {
     private StringSensor sensor;
     private ICommunicationStrategy<string> communication;
-    private IMeasurementParser<string> parser;
+    private IReadingConverter<string> converter;
 
     public StringSensorTests()
     {
         communication = A.Fake<CommunicationStrategy<string>>();
-        parser = A.Fake<MeasurementParser<string>>();
-        sensor = new StringSensor("Thermometer", "GET_TEMP", communication, parser);
+        converter = A.Fake<ReadingConverterBase<string>>();
+        sensor = new StringSensor("Thermometer", "GET_TEMP", communication, converter);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class StringSensorTests
         string emptyName = string.Empty;
 
         // Act
-        Action act = () => new StringSensor(emptyName, "GET_TEMP", communication, parser);
+        Action act = () => new StringSensor(emptyName, "GET_TEMP", communication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -43,7 +43,7 @@ public class StringSensorTests
         string nullRequestCommand = null;
 
         // Act
-        Action act = () => new StringSensor("Thermometer", nullRequestCommand, communication, parser);
+        Action act = () => new StringSensor("Thermometer", nullRequestCommand, communication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -56,7 +56,7 @@ public class StringSensorTests
         string requestCommand = "";
 
         // Act
-        Action act = () => new StringSensor("Thermometer", requestCommand, communication, parser);
+        Action act = () => new StringSensor("Thermometer", requestCommand, communication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -69,20 +69,20 @@ public class StringSensorTests
         ICommunicationStrategy<string> nullCommunication = null;
 
         // Act
-        Action act = () => new StringSensor("Thermometer", "GET_TEMP", nullCommunication, parser);
+        Action act = () => new StringSensor("Thermometer", "GET_TEMP", nullCommunication, converter);
 
         // Assert
         Assert.Throws<AIMException>(act);
     }
 
     [Fact]
-    public void Constructor_GivenParserIsNull_ThrowsException()
+    public void Constructor_GivenConverterIsNull_ThrowsException()
     {
         // Arrange
-        IMeasurementParser<string> nullParser = null;
+        IReadingConverter<string> nullConverter = null;
 
         // Act
-        Action act = () => new StringSensor("Thermometer", "GET_TEMP", communication, nullParser);
+        Action act = () => new StringSensor("Thermometer", "GET_TEMP", communication, nullConverter);
 
         // Assert
         Assert.Throws<AIMException>(act);
@@ -96,13 +96,13 @@ public class StringSensorTests
         string requestCommand = "GET_TEMP";
 
         // Act
-        var sensor = new StringSensor(sensorName, requestCommand, communication, parser);
+        var sensor = new StringSensor(sensorName, requestCommand, communication, converter);
 
         // Assert
         Assert.Equal(sensorName, sensor.Name);
         Assert.Equal(requestCommand, sensor.RequestCommand);
         Assert.Equal(communication, sensor.CommunicationStrategy);
-        Assert.Equal(parser, sensor.Parser);
+        Assert.Equal(converter, sensor.Converter);
     }
 
     [Fact]
@@ -144,15 +144,15 @@ public class StringSensorTests
     }
 
     [Fact]
-    public void GetParser_GivenParserIsSet_ReturnsParser()
+    public void GetConverter_GivenConverterIsSet_ReturnsConverter()
     {
         // Arrange
 
         // Act
-        var actual = sensor.Parser;
+        var actual = sensor.Converter;
 
         // Assert
-        Assert.Equal(parser, actual);
+        Assert.Equal(converter, actual);
     }
 
     [Fact]
@@ -241,7 +241,7 @@ public class StringSensorTests
     }
 
     [Fact]
-    public void StopReading_GivenReadingIsStarted_InvokesParserParse()
+    public void StopReading_GivenReadingIsStarted_InvokesConverterConvert()
     {
         // Arrange
         A.CallTo(() => communication.Receive()).Returns("25.0");
@@ -251,7 +251,7 @@ public class StringSensorTests
         sensor.StopReading();
 
         // Assert
-        A.CallTo(() => sensor.Parser.Parse("25.0")).MustHaveHappened();
+        A.CallTo(() => sensor.Converter.Convert("25.0")).MustHaveHappened();
     }
 
     [Fact]
@@ -268,7 +268,7 @@ public class StringSensorTests
     }
 
     [Fact]
-    public async Task StopReadingAsync_GivenReadingIsStarted_InvokesParserParse()
+    public async Task StopReadingAsync_GivenReadingIsStarted_InvokesConverterConvert()
     {
         // Arrange
         A.CallTo(() => communication.ReceiveAsync()).Returns("25.0");
@@ -278,11 +278,11 @@ public class StringSensorTests
         await sensor.StopReadingAsync();
 
         // Assert
-        A.CallTo(() => sensor.Parser.Parse("25.0")).MustHaveHappened();
+        A.CallTo(() => sensor.Converter.Convert("25.0")).MustHaveHappened();
     }
 
     [Fact]
-    public void StopReading_GivenReadingIsStarted_ShouldReturnParsedData()
+    public void StopReading_GivenReadingIsStarted_ShouldReturnConvertedData()
     {
         // Arrange
         var reading = new SensorReading("Thermometer");
@@ -290,7 +290,7 @@ public class StringSensorTests
         reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.Receive()).Returns("25.0");
-        A.CallTo(() => parser.Parse("25.0")).Returns(reading);
+        A.CallTo(() => converter.Convert("25.0")).Returns(reading);
         sensor.StartReading();
 
         // Act
@@ -301,7 +301,7 @@ public class StringSensorTests
     }
 
     [Fact]
-    public async Task StopReadingAsync_GivenReadingIsStarted_ShouldReturnParsedData()
+    public async Task StopReadingAsync_GivenReadingIsStarted_ShouldReturnConvertedData()
     {
         // Arrange
        var reading = new SensorReading("Thermometer");
@@ -309,7 +309,7 @@ public class StringSensorTests
        reading.TimeStamp = DateTime.Now;
 
         A.CallTo(() => communication.ReceiveAsync()).Returns("25.0");
-        A.CallTo(() => parser.Parse("25.0")).Returns(reading);
+        A.CallTo(() => converter.Convert("25.0")).Returns(reading);
         sensor.StartReading();
 
         // Act

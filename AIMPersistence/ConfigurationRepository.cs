@@ -4,7 +4,7 @@ using AIMCore;
 using AIMCore.Communication;
 using AIMCore.Configurations;
 using AIMCore.Sensors;
-using AIMSmartScale.Parsers;
+using AIMSmartScale.Converters;
 using AIMSmartScale.Sensors;
 
 namespace AIMPersistence;
@@ -13,7 +13,7 @@ public class ConfigurationRepository
 {
     public Configuration GetDefaultConfiguration()
     {
-        var measurementParserFactory = new ScaleMeasurementParserFactory();
+        var readingConverterFactory = new ScaleReadingConverterFactory();
 
         var serialPort = new SerialPort()
         {
@@ -29,13 +29,13 @@ public class ConfigurationRepository
         var portWrapper = new SerialPortWrapper(serialPort);
 
         var uartStrategy = new UARTCommunication(portWrapper);
-        var parser = measurementParserFactory.GetParsers().OfType<ScaleMeasurementParser>().First();
+        var converter = readingConverterFactory.GetConverters().OfType<ScaleReadingConverter>().First();
 
-        var instrument = new Scale("SCALE", "GET_WEIGHT", uartStrategy, parser);
+        var instrument = new Scale("SCALE", "GET_WEIGHT", uartStrategy, converter);
 
         var sensors = new List<ISensor>();
-        var gyroscope = new Gyroscope("GYROSCOPE", "GET_TILT", uartStrategy, parser);
-        var vibrationsensor = new Accelerometer("ACCELEROMETER", "GET_VIBR", uartStrategy, parser);
+        var gyroscope = new Gyroscope("GYROSCOPE", "GET_TILT", uartStrategy, converter);
+        var vibrationsensor = new Accelerometer("ACCELEROMETER", "GET_VIBR", uartStrategy, converter);
         sensors.Add(gyroscope);
         sensors.Add(vibrationsensor);
 

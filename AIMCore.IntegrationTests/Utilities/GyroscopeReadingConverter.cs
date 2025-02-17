@@ -1,17 +1,17 @@
 using System;
 using System.Globalization;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 
 namespace AIMCore.IntegrationTests.Utilities;
 
-public class GyroscopeMeasurementParser : MeasurementParser<string>
+public class GyroscopeReadingConverter : ReadingConverterBase<string>
 {
-    public GyroscopeMeasurementParser()
+    public GyroscopeReadingConverter()
     {
-        Name = "Gyroscope Parser";
+        Name = "Gyroscope converter";
     }
 
-    public override SensorReading Parse(string data)
+    public override SensorReading Convert(string data)
     {
         var dataPoints = data.Split(';');
 

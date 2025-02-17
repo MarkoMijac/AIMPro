@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using AIMCore;
 using AIMCore.Communication;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 using AIMCore.Sensors;
-using AIMSmartScale.Parsers;
+using AIMSmartScale.Converters;
 using AIMSmartScale.Sensors;
 using Avalonia;
 using Avalonia.Controls;
@@ -15,13 +15,13 @@ namespace AvaloniaGUI;
 
 public partial class AddInstrumentWindow : Window
 {
-    private ScaleMeasurementParserFactory _parserFactory;
+    private ScaleReadingConverterFactory _parserFactory;
 
     public ISensor Sensor { get; private set; }
 
     public AddInstrumentWindow()
     {
-        _parserFactory = new ScaleMeasurementParserFactory();
+        _parserFactory = new ScaleReadingConverterFactory();
         InitializeComponent();
     }
 
@@ -33,7 +33,7 @@ public partial class AddInstrumentWindow : Window
 
     private void FillParsers()
     {
-        _parserFactory.GetParsers().ForEach(x => cmbParser.Items.Add(x));
+        _parserFactory.GetConverters().ForEach(x => cmbParser.Items.Add(x));
     }
 
     private void FillCommunicationTypes()
@@ -95,7 +95,7 @@ public partial class AddInstrumentWindow : Window
         string comType = cmbCommunicationType.SelectedItem.ToString();
 
         var communicationType = cmbCommunicationType.SelectedItem as ICommunicationStrategy<string>;
-        var parser = cmbParser.SelectedItem as IMeasurementParser<string>;
+        var converter = cmbParser.SelectedItem as IReadingConverter<string>;
         string port = txtPort.Text;
         int baudRate = int.Parse(txtBaudRate.Text);
 
@@ -103,7 +103,7 @@ public partial class AddInstrumentWindow : Window
             .SetName(name)
             .SetRequestCommand(request)
             .SetCommunicationStrategy(communicationType)
-            .SetParser(parser)
+            .SetConverters(converter)
             .Build();
     }
 }

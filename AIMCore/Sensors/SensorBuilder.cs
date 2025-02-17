@@ -1,7 +1,7 @@
 using System;
 using AIMCore.Communication;
 using AIMCore.Exceptions;
-using AIMCore.Parsers;
+using AIMCore.Converters;
 
 namespace AIMCore.Sensors;
 
@@ -10,7 +10,7 @@ public abstract class SensorBuilder<T> : ISensorBuilder
     protected string _name;
     protected string _requestCommand;
     protected ICommunicationStrategy<T> _communicationStrategy;
-    protected IMeasurementParser<T> _parser;
+    protected IReadingConverter<T> _converter;
 
     public SensorBuilder<T> SetName(string name)
     {
@@ -30,9 +30,9 @@ public abstract class SensorBuilder<T> : ISensorBuilder
         return this;
     }
 
-    public SensorBuilder<T> SetParser(IMeasurementParser<T> parser)
+    public SensorBuilder<T> SetConverters(IReadingConverter<T> converter)
     {
-        _parser = parser;
+        _converter = converter;
         return this;
     }
 
@@ -53,9 +53,9 @@ public abstract class SensorBuilder<T> : ISensorBuilder
         {
             throw new AIMException("Communication type must be selected.");
         }
-        if (sensor.Parser == null)
+        if (sensor.Converter == null)
         {
-            throw new AIMException("Parser must be selected.");
+            throw new AIMException("Converter must be selected.");
         }
     }
 }
