@@ -47,24 +47,24 @@ public class AIMTests
         baseInstrumentReading.AddMeasurement("weight", 1);
         baseInstrumentReading.TimeStamp = DateTime.Now;
 
-        A.CallTo(() => baseInstrument.StopReading()).Returns(baseInstrumentReading);
-        A.CallTo(() => baseInstrument.StopReadingAsync()).Returns(baseInstrumentReading);
+        A.CallTo(() => baseInstrument.Read()).Returns(baseInstrumentReading);
+        A.CallTo(() => baseInstrument.ReadAsync()).Returns(baseInstrumentReading);
 
         var sensor1 = configuration.Sensors[0];
         var sensorOneReading = new SensorReading("Sensor 1 reading");
         sensorOneReading.AddMeasurement("vibrationRate", 2);
         sensorOneReading.TimeStamp = DateTime.Now;
 
-        A.CallTo(() => sensor1.StopReading()).Returns(sensorOneReading);
-        A.CallTo(() => sensor1.StopReadingAsync()).Returns(sensorOneReading);
+        A.CallTo(() => sensor1.Read()).Returns(sensorOneReading);
+        A.CallTo(() => sensor1.ReadAsync()).Returns(sensorOneReading);
 
         var sensor2 = configuration.Sensors[1];
         var sensorTwoReading = new SensorReading("Sensor 2 reading");
         sensorTwoReading.AddMeasurement("incline", 3);
         sensorTwoReading.TimeStamp = DateTime.Now;
 
-        A.CallTo(() => sensor2.StopReading()).Returns(sensorTwoReading);
-        A.CallTo(() => sensor2.StopReadingAsync()).Returns(sensorTwoReading);
+        A.CallTo(() => sensor2.Read()).Returns(sensorTwoReading);
+        A.CallTo(() => sensor2.ReadAsync()).Returns(sensorTwoReading);
 
         return configuration;
     }

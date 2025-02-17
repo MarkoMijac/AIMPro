@@ -71,50 +71,6 @@ public abstract class SensorBase<T> : ISensor
     {
         await CommunicationStrategy.DisconnectAsync();
     }
-    
-    public virtual void StartReading()
-    {
-        if(IsReading == true)
-        {
-            throw new AIMException("Sensor is already reading.");
-        }
-
-        IsReading = true;
-        CommunicationStrategy.Send(RequestCommand);
-    }
-
-    public virtual async Task StartReadingAsync()
-    {
-        if(IsReading == true)
-        {
-            throw new AIMException("Sensor is already reading.");
-        }
-        IsReading = true;
-        await CommunicationStrategy.SendAsync(RequestCommand);
-    }
-    
-    public virtual SensorReading StopReading()
-    {
-        if(IsReading == false)
-        {
-            throw new AIMException("Sensor is not reading.");
-        }
-
-        T data = CommunicationStrategy.Receive();
-        IsReading = false;
-        return Converter.Convert(data);
-    }
-    public virtual async Task<SensorReading> StopReadingAsync()
-    {
-        if(IsReading == false)
-        {
-            throw new AIMException("Sensor is not reading.");
-        }
-        
-        T data = await CommunicationStrategy.ReceiveAsync();
-        IsReading = false;
-        return Converter.Convert(data);
-    }
 
     public SensorReading Read()
     {
