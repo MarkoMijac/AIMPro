@@ -13,12 +13,6 @@ public interface ICommunicationStrategy<T>
     Task ConnectAsync();
     Task DisconnectAsync();
 
-    void Send(T command);
-    Task SendAsync(T command);
-
-    T Receive();
-    Task<T> ReceiveAsync();
-
     T Execute(T command);    
     Task<T> ExecuteAsync(T command);
 }

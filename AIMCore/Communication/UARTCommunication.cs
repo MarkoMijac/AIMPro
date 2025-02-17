@@ -42,40 +42,6 @@ public class UARTCommunication : CommunicationStrategy<string>
         await Task.Run(() => Disconnect());
     }
 
-    public override string Receive()
-    {
-        if(_serialPort.IsOpen)
-        {
-            return _serialPort.ReadLine();
-        }
-        else
-        {
-            throw new AIMException("Serial port is not open");
-        }
-    }
-
-    public override async Task<string> ReceiveAsync()
-    {
-        return await Task.Run(() => Receive());
-    }
-
-    public override void Send(string command)
-    {
-        if(_serialPort.IsOpen)
-        {
-            _serialPort.WriteLine(command);
-        }
-        else
-        {
-            throw new AIMException("Serial port is not open");
-        }
-    }
-
-    public override Task SendAsync(string command)
-    {
-        return Task.Run(() => Send(command));
-    }
-
     public override string Execute(string command)
     {
         throw new NotImplementedException();

@@ -34,47 +34,10 @@ public class VibrationCommunicationStrategy : CommunicationStrategy<string>
         return Task.CompletedTask;
     }
 
-    public override string Receive()
-    {
-        if(IsConnected)
-        {
-            return DateTime.Now.ToString() + ";" + GenerateRandomValue().ToString();
-        }
-        else
-        {
-            throw new AIMException("Vibration sensor is not connected");
-        }
-    }
-
     private static double GenerateRandomValue()
     {
         var random = new Random();
         return random.Next(0, 1) + random.NextDouble();
-    }
-
-    public override async Task<string> ReceiveAsync()
-    {
-        return await Task.Run(() => Receive());
-    }
-
-    public override void Send(string command)
-    {
-        if(IsConnected)
-        {
-            if(command != "GET_VIBR")
-            {
-                throw new AIMException("Invalid command");
-            }
-        }
-        else
-        {
-            throw new AIMException("Vibration sensor is not connected");
-        }
-    }
-
-    public override Task SendAsync(string command)
-    {
-        return Task.Run(() => Send(command));
     }
 
     public override string Execute(string command)
