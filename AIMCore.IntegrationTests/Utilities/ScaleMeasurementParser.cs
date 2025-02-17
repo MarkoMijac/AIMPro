@@ -18,7 +18,7 @@ public class ScaleMeasurementParser : MeasurementParser<string>
         DateTime.TryParse(dataPoints[0].Trim(), out var timestamp);
         float.TryParse(dataPoints[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var weight);
 
-        var reading = new SensorReading("Scale");
+        var reading = new SensorReading("measured_weight");
         reading.AddMeasurement("weight", weight);
         reading.TimeStamp = timestamp;
         return reading;

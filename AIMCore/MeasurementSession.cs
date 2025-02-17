@@ -24,11 +24,11 @@ public class MeasurementSession
 
     private bool IsBaseInstrumentDataValid()
     {
-        return BaseInstrumentReading != null;
+        return BaseInstrumentReading != null && BaseInstrumentReading.Measurements.Count > 0;
     }
 
     private bool AreSensorDataSeriesValid()
     {
-        return SensorsReadings.Count > 0 && SensorsReadings.All(reading => reading != null);
+        return SensorsReadings.Count > 0 && SensorsReadings.All(reading => reading != null && reading.Measurements.Count > 0);
     }
 }

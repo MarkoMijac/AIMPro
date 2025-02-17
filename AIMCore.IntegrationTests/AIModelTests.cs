@@ -66,7 +66,7 @@ public class AIModelTests
         var path = _validModelPath;
         var model = new AIModel("TestModel", path);
         var session = new MeasurementSession();
-        var scaleReading = new SensorReading("Scale sensor");
+        var scaleReading = new SensorReading("measured_weight");
         scaleReading.AddMeasurement("weight", 20.0f);
         scaleReading.TimeStamp = DateTime.Now;
 
