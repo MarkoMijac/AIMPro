@@ -29,11 +29,11 @@ public partial class MainWindow : Window
 
     private void btnStartSession_Click(object sender, RoutedEventArgs e)
     {
-        AIM.StartMeasurementSession();
+        
     }
 
     private void btnEndSession_Click(object sender, RoutedEventArgs e)
     {
-        var session = AIM.EndMeasurementSession();
+        
     }
 }

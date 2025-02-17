@@ -42,7 +42,7 @@ public class AIM
         return prediction;
     }
 
-    public async Task<IPredictionResult> PredictionAsync(MeasurementSession session)
+    public async Task<IPredictionResult> PredictAsync(MeasurementSession session)
     {
         if (session == null)
         {
@@ -86,56 +86,10 @@ public class AIM
         }
     }
 
-    public void StartMeasurementSession()
+    public void ConnectAllSensors()
     {
         ValidateConfiguration(Configuration);
 
-        _stateManager.PerformTransition(ActivationEvent.StartMeasurementSession);
-
-        ConnectAllSensors();
-        StartReadingAllSensors();
-    }
-
-    public async Task StartMeasurementSessionAsync()
-    {
-        ValidateConfiguration(Configuration);
-
-        _stateManager.PerformTransition(ActivationEvent.StartMeasurementSession);
-
-        await ConnectAllSensorsAsync();
-        await StartReadingAllSensorsAsync();
-    }
-
-    private void StartReadingAllSensors()
-    {
-        var instrument = Configuration.BaseInstrument;
-        instrument.StartReading();
-
-        foreach (var sensor in Configuration.Sensors)
-        {
-            sensor.StartReading();
-        }
-    }
-
-    private async Task StartReadingAllSensorsAsync()
-    {
-        var tasks = new List<Task>();
-
-        var instrument = Configuration.BaseInstrument;
-        var instrumentReading = instrument.StartReadingAsync();
-        tasks.Add(instrumentReading);
-
-        foreach (var sensor in Configuration.Sensors)
-        {
-            var sensorReading = sensor.StartReadingAsync();
-            tasks.Add(sensorReading);
-        }
-
-        await Task.WhenAll(tasks.ToArray());
-    }
-
-    private void ConnectAllSensors()
-    {
         var instrument = Configuration.BaseInstrument;
         instrument.Connect();
 
@@ -147,6 +101,8 @@ public class AIM
 
     private async Task ConnectAllSensorsAsync()
     {
+        ValidateConfiguration(Configuration);
+
         List<Task> tasks = new List<Task>();
 
         var instrument = Configuration.BaseInstrument;
@@ -163,25 +119,9 @@ public class AIM
         await Task.WhenAll(tasks.ToArray());
     }
 
-    public MeasurementSession EndMeasurementSession()
-    {
-        ValidateConfiguration(Configuration);
-        if (Status != AIMStatus.Measuring)
-        {
-            throw new AIMMeasurementSessionNotStartedException();
-        }
-
-        _stateManager.PerformTransition(ActivationEvent.EndMeasurementSession);
-
-        var session = new MeasurementSession();
-        StopReadingAllSensors(session);
-        DisconnectAllSensors();
-
-        return session;
-    }
-
     private void DisconnectAllSensors()
     {
+        ValidateConfiguration(Configuration);
         var instrument = Configuration.BaseInstrument;
         instrument.Disconnect();
 
@@ -191,21 +131,9 @@ public class AIM
         }
     }
 
-    private void StopReadingAllSensors(MeasurementSession session)
-    {
-        var instrument = Configuration.BaseInstrument;
-        var instrumentData = instrument.StopReading();
-        session.SetInstrumentReading(instrumentData);
-
-        foreach (var sensor in Configuration.Sensors)
-        {
-            var sensorData = sensor.StopReading();
-            session.AddSensorReading(sensorData);
-        }
-    }
-
     private async Task DisconnectAllSensorsAsync()
     {
+        ValidateConfiguration(Configuration);
         var tasks = new List<Task>();
 
         var instrument = Configuration.BaseInstrument;
@@ -217,36 +145,6 @@ public class AIM
         }
 
         await Task.WhenAll(tasks.ToArray());
-    }
-
-    private async Task StopReadingAllSensorsAsync(MeasurementSession session)
-    {
-        var instrument = Configuration.BaseInstrument;
-        var instrumentData = await instrument.StopReadingAsync();
-        session.SetInstrumentReading(instrumentData);
-
-        foreach (var sensor in Configuration.Sensors)
-        {
-            var sensorData = await sensor.StopReadingAsync();
-            session.AddSensorReading(sensorData);
-        }
-    }
-
-    public async Task<MeasurementSession> EndMeasurementSessionAsync()
-    {
-        ValidateConfiguration(Configuration);
-        if (Status != AIMStatus.Measuring)
-        {
-            throw new AIMMeasurementSessionNotStartedException();
-        }
-
-        _stateManager.PerformTransition(ActivationEvent.EndMeasurementSession);
-
-        var session = new MeasurementSession();
-        await StopReadingAllSensorsAsync(session);
-        await DisconnectAllSensorsAsync();
-
-        return session;
     }
 
     public MeasurementSession GetData()
@@ -267,6 +165,28 @@ public class AIM
         }
 
         DisconnectAllSensors();
+
+        return session;
+    }
+
+    public async Task<MeasurementSession> GetDataAsync()
+    {
+        MeasurementSession session = new MeasurementSession();
+
+        ValidateConfiguration(Configuration);
+        await ConnectAllSensorsAsync();
+
+        var instrument = Configuration.BaseInstrument;
+        var instrumentReading = await instrument.ReadAsync();
+        session.SetInstrumentReading(instrumentReading);
+
+        foreach (var sensor in Configuration.Sensors)
+        {
+            var sensorReading = await sensor.ReadAsync();
+            session.AddSensorReading(sensorReading);
+        }
+
+        await DisconnectAllSensorsAsync();
 
         return session;
     }
