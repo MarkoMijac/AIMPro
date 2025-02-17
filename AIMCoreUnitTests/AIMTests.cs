@@ -187,6 +187,148 @@ public class AIMTests
     }
 
     [Fact]
+    public void Connect_GivenConfigurationLoaded_StatusIsReady()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        // Act
+        aim.Connect();
+
+        // Assert
+        Assert.Equal(AIMStatus.Ready, aim.Status);
+    }
+
+    [Fact]
+    public void Connect_GivenConfigurationNotLoaded_ThrowsAIMException()
+    {
+        // Arrange
+        var aim = new AIM();
+
+        // Act & Assert
+        var exception = Assert.Throws<AIMNoConfigurationProvidedException>(() => aim.Connect());
+    }
+
+    [Fact]
+    public void Connect_GivenAlreadyConnected_DoesNotAttemptConnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(true);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(true);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(true);
+        // Act
+        aim.Connect();
+
+        //Assert
+        A.CallTo(() => baseInstrument.Connect()).MustNotHaveHappened();
+        A.CallTo(() => sensor1.Connect()).MustNotHaveHappened();
+        A.CallTo(() => sensor2.Connect()).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public void Connect_GivenNotAlreadyConnected_AttemptsConnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(false);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(false);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(false);
+        // Act
+        aim.Connect();
+
+        //Assert
+        A.CallTo(() => baseInstrument.Connect()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor1.Connect()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor2.Connect()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void ConnectAsync_GivenConfigurationLoaded_StatusIsReady()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        // Act
+        await aim.ConnectAsync();
+
+        // Assert
+        Assert.Equal(AIMStatus.Ready, aim.Status);
+    }
+
+    [Fact]
+    public async void ConnectAsync_GivenConfigurationNotLoaded_ThrowsAIMException()
+    {
+        // Arrange
+        var aim = new AIM();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<AIMNoConfigurationProvidedException>(() => aim.ConnectAsync());
+    }
+
+    [Fact]
+    public async void ConnectAsync_GivenAlreadyConnected_DoesNotAttemptConnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(true);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(true);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(true);
+        // Act
+        await aim.ConnectAsync();
+
+        //Assert
+        A.CallTo(() => baseInstrument.ConnectAsync()).MustNotHaveHappened();
+        A.CallTo(() => sensor1.ConnectAsync()).MustNotHaveHappened();
+        A.CallTo(() => sensor2.ConnectAsync()).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async void ConnectAsync_GivenNotAlreadyConnected_AttemptsConnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(false);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(false);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(false);
+        // Act
+        await aim.ConnectAsync();
+
+        //Assert
+        A.CallTo(() => baseInstrument.ConnectAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor1.ConnectAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor2.ConnectAsync()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
     public void Predict_GivenSessionIsNull_ThrowsException()
     {
         //Arrange

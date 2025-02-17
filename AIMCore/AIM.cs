@@ -91,11 +91,17 @@ public class AIM
         ValidateConfiguration(Configuration);
 
         var instrument = Configuration.BaseInstrument;
-        instrument.Connect();
-
+        if(instrument.IsConnected == false)
+        {
+            instrument.Connect();
+        }
+        
         foreach (var sensor in Configuration.Sensors)
         {
-            sensor.Connect();
+            if(sensor.IsConnected == false)
+            {
+                sensor.Connect();
+            }
         }
     }
 
@@ -106,14 +112,19 @@ public class AIM
         List<Task> tasks = new List<Task>();
 
         var instrument = Configuration.BaseInstrument;
-        var instrumentConnect = instrument.ConnectAsync();
-
-        tasks.Add(instrumentConnect);
+        if(instrument.IsConnected == false)
+        {
+            var instrumentConnect = instrument.ConnectAsync();
+            tasks.Add(instrumentConnect);
+        }
 
         foreach (var sensor in Configuration.Sensors)
         {
-            var sensorConnect = sensor.ConnectAsync();
-            tasks.Add(sensorConnect);
+            if(sensor.IsConnected == false)
+            {
+                var sensorConnect = sensor.ConnectAsync();
+                tasks.Add(sensorConnect);
+            }
         }
 
         await Task.WhenAll(tasks.ToArray());
