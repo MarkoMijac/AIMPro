@@ -195,12 +195,12 @@ public class AIM
     {
         var instrument = Configuration.BaseInstrument;
         var instrumentData = instrument.StopReading();
-        session.SetInstrumentData(instrumentData);
+        session.SetInstrumentReading(instrumentData);
 
         foreach (var sensor in Configuration.Sensors)
         {
             var sensorData = sensor.StopReading();
-            session.AddSensorData(sensorData);
+            session.AddSensorReading(sensorData);
         }
     }
 
@@ -223,12 +223,12 @@ public class AIM
     {
         var instrument = Configuration.BaseInstrument;
         var instrumentData = await instrument.StopReadingAsync();
-        session.SetInstrumentData(instrumentData);
+        session.SetInstrumentReading(instrumentData);
 
         foreach (var sensor in Configuration.Sensors)
         {
             var sensorData = await sensor.StopReadingAsync();
-            session.AddSensorData(sensorData);
+            session.AddSensorReading(sensorData);
         }
     }
 
@@ -245,6 +245,28 @@ public class AIM
         var session = new MeasurementSession();
         await StopReadingAllSensorsAsync(session);
         await DisconnectAllSensorsAsync();
+
+        return session;
+    }
+
+    public MeasurementSession GetData()
+    {
+        MeasurementSession session = new MeasurementSession();
+
+        ValidateConfiguration(Configuration);
+        ConnectAllSensors();
+
+        var instrument = Configuration.BaseInstrument;
+        var instrumentReading = instrument.Read();
+        session.SetInstrumentReading(instrumentReading);
+
+        foreach (var sensor in Configuration.Sensors)
+        {
+            var sensorReading = sensor.Read();
+            session.AddSensorReading(sensorReading);
+        }
+
+        DisconnectAllSensors();
 
         return session;
     }

@@ -115,4 +115,34 @@ public abstract class SensorBase<T> : ISensor
         IsReading = false;
         return Converter.Convert(data);
     }
+
+    public SensorReading Read()
+    {
+        if(IsReading == true)
+        {
+            throw new AIMException("Sensor is already reading.");
+        }
+
+        IsReading = true;
+        T data = CommunicationStrategy.Execute(RequestCommand);
+        var sensorReading = Converter.Convert(data);
+        IsReading = false;
+        
+        return sensorReading;
+    }
+
+    public async Task<SensorReading> ReadAsync()
+    {
+        if(IsReading == true)
+        {
+            throw new AIMException("Sensor is already reading.");
+        }
+
+        IsReading = true;
+        T data = await CommunicationStrategy.ExecuteAsync(RequestCommand);
+        var sensorReading = Converter.Convert(data);
+        IsReading = false;
+        
+        return sensorReading;
+    }
 }

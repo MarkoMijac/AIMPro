@@ -30,6 +30,16 @@ public class WiFiCommunication : CommunicationStrategy<string>
         throw new NotImplementedException();
     }
 
+    public override string Execute(string command)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task<string> ExecuteAsync(string command)
+    {
+        throw new NotImplementedException();
+    }
+
     public override string Receive()
     {
         throw new NotImplementedException();

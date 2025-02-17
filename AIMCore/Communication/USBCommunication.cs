@@ -30,6 +30,16 @@ public class USBCommunication : CommunicationStrategy<byte[]>
         throw new NotImplementedException();
     }
 
+    public override byte[] Execute(byte[] command)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task<byte[]> ExecuteAsync(byte[] command)
+    {
+        throw new NotImplementedException();
+    }
+
     public override byte[] Receive()
     {
         throw new NotImplementedException();

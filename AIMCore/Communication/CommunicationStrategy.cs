@@ -19,6 +19,8 @@ public abstract class CommunicationStrategy<T> : ICommunicationStrategy<T>
     public abstract void Send(T command);
     public abstract Task SendAsync(T command);
 
+    public abstract T Execute(T command);
+    public abstract Task<T> ExecuteAsync(T command);
     public override string ToString()
     {
         return Name;

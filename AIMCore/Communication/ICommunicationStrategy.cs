@@ -18,5 +18,7 @@ public interface ICommunicationStrategy<T>
 
     T Receive();
     Task<T> ReceiveAsync();
-    
+
+    T Execute(T command);    
+    Task<T> ExecuteAsync(T command);
 }

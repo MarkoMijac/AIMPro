@@ -79,9 +79,9 @@ public class AIModelTests
         gyroscopeReading.AddMeasurement("angle", 0.5f);
         gyroscopeReading.TimeStamp = DateTime.Now;
 
-        session.SetInstrumentData(scaleReading);
-        session.AddSensorData(vibrationSensorReading);
-        session.AddSensorData(gyroscopeReading);
+        session.SetInstrumentReading(scaleReading);
+        session.AddSensorReading(vibrationSensorReading);
+        session.AddSensorReading(gyroscopeReading);
 
         // Act
         var result = model.Predict(session);

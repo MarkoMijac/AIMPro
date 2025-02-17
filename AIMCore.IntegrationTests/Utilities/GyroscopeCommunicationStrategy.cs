@@ -76,4 +76,26 @@ public class GyroscopeCommunicationStrategy : CommunicationStrategy<string>
     {
         return Task.Run(() => Send(command));
     }
+
+    public override string Execute(string command)
+    {
+        if(IsConnected)
+        {
+            if(command != "GET_INCLINE")
+            {
+                throw new AIMException("Invalid command");
+            }
+
+            return DateTime.Now.ToString() + ";" + GenerateRandomValue().ToString();
+        }
+        else
+        {
+            throw new AIMException("Gyroscope is not connected");
+        }
+    }
+
+    public override async Task<string> ExecuteAsync(string command)
+    {
+        return await Task.Run(() => Execute(command));
+    }
 }

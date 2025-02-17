@@ -7,12 +7,12 @@ public class MeasurementSession
     public SensorReading BaseInstrumentReading { get; private set; }
     public List<SensorReading> SensorsReadings { get; private set; } = new List<SensorReading>();
 
-    public void SetInstrumentData(SensorReading reading)
+    public void SetInstrumentReading(SensorReading reading)
     {
         BaseInstrumentReading = reading;
     }
 
-    public void AddSensorData(SensorReading reading)
+    public void AddSensorReading(SensorReading reading)
     {
         SensorsReadings.Add(reading);
     }

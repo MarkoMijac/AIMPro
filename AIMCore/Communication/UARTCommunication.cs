@@ -75,4 +75,14 @@ public class UARTCommunication : CommunicationStrategy<string>
     {
         return Task.Run(() => Send(command));
     }
+
+    public override string Execute(string command)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task<string> ExecuteAsync(string command)
+    {
+        throw new NotImplementedException();
+    }
 }

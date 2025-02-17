@@ -29,6 +29,16 @@ public class BluetoothCommunication : CommunicationStrategy<byte[]>
         throw new NotImplementedException();
     }
 
+    public override byte[] Execute(byte[] command)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task<byte[]> ExecuteAsync(byte[] command)
+    {
+        throw new NotImplementedException();
+    }
+
     public override byte[] Receive()
     {
         throw new NotImplementedException();

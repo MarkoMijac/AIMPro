@@ -77,4 +77,26 @@ public class ScaleCommunicationStrategy : CommunicationStrategy<string>
     {
         return Task.Run(() => Send(command));
     }
+
+    public override string Execute(string command)
+    {
+        if(IsConnected)
+        {
+            if(command != "GET_WEIGHT")
+            {
+                throw new AIMException("Invalid command");
+            }
+
+            return DateTime.Now.ToString() + ";" + GenerateRandomWeight().ToString();
+        }
+        else
+        {
+            throw new AIMException("Scale is not connected");
+        }
+    }
+
+    public override async Task<string> ExecuteAsync(string command)
+    {
+        return await Task.Run(() => Execute(command));
+    }
 }

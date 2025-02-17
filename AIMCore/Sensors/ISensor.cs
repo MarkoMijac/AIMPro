@@ -15,4 +15,6 @@ public interface ISensor
     Task StartReadingAsync();
     Task<SensorReading> StopReadingAsync();
     bool IsConnected { get; }
+    SensorReading Read();
+    Task<SensorReading> ReadAsync();
 }
