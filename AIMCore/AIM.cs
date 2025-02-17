@@ -86,7 +86,7 @@ public class AIM
         }
     }
 
-    public void ConnectAllSensors()
+    public void Connect()
     {
         ValidateConfiguration(Configuration);
 
@@ -99,7 +99,7 @@ public class AIM
         }
     }
 
-    private async Task ConnectAllSensorsAsync()
+    public async Task ConnectAsync()
     {
         ValidateConfiguration(Configuration);
 
@@ -119,7 +119,7 @@ public class AIM
         await Task.WhenAll(tasks.ToArray());
     }
 
-    private void DisconnectAllSensors()
+    public void Disconnect()
     {
         ValidateConfiguration(Configuration);
         var instrument = Configuration.BaseInstrument;
@@ -131,7 +131,7 @@ public class AIM
         }
     }
 
-    private async Task DisconnectAllSensorsAsync()
+    public async Task DisconnectAsync()
     {
         ValidateConfiguration(Configuration);
         var tasks = new List<Task>();
@@ -152,7 +152,6 @@ public class AIM
         MeasurementSession session = new MeasurementSession();
 
         ValidateConfiguration(Configuration);
-        ConnectAllSensors();
 
         var instrument = Configuration.BaseInstrument;
         var instrumentReading = instrument.Read();
@@ -164,8 +163,6 @@ public class AIM
             session.AddSensorReading(sensorReading);
         }
 
-        DisconnectAllSensors();
-
         return session;
     }
 
@@ -174,7 +171,6 @@ public class AIM
         MeasurementSession session = new MeasurementSession();
 
         ValidateConfiguration(Configuration);
-        await ConnectAllSensorsAsync();
 
         var instrument = Configuration.BaseInstrument;
         var instrumentReading = await instrument.ReadAsync();
@@ -185,8 +181,6 @@ public class AIM
             var sensorReading = await sensor.ReadAsync();
             session.AddSensorReading(sensorReading);
         }
-
-        await DisconnectAllSensorsAsync();
 
         return session;
     }
