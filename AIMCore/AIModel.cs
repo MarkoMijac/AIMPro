@@ -86,13 +86,12 @@ public class AIModel : IAIModel
     
         using (var results = await Task.Run(() => _model.Run(inputTensors)))
         {
-            var outputValues = results.First().AsEnumerable<double>().ToArray();
+            var outputValues = results.First().AsEnumerable<float>().ToArray();
             
             // Assuming the model outputs a single corrected value and confidence score
             return new PredictionResult
             {
                 CorrectedMeasurement = outputValues[0],
-                ConfidenceScore = outputValues[1]
             };
         }
     }
