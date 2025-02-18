@@ -7,6 +7,6 @@ public class ScaleBuilder : SensorBuilder<string>
 {
     public override ISensor Build()
     {
-        return new Scale(_name, _requestCommand, _communicationStrategy, _converter);
+        return new Scale(_name, _communicationStrategy, _converter);
     }
 }
