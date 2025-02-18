@@ -1,13 +1,9 @@
-using System;
 using AIMCore.Communication;
 using AIMCore.Converters;
 using AIMCore.Sensors;
 
 namespace AIMSmartScale.Sensors;
 
-public class Gyroscope : SensorBase<string>
+public class Gyroscope(string name, ICommunicationStrategy<string> communicationStrategy, IReadingConverter<string> converter) : SensorBase<string>(name, "", communicationStrategy, converter)
 {
-    public Gyroscope(string name, string requestCommand, ICommunicationStrategy<string> communicationStrategy, IReadingConverter<string> converter) : base(name, requestCommand, communicationStrategy, converter)
-    {
-    }
 }
