@@ -134,11 +134,17 @@ public class AIM
     {
         ValidateConfiguration(Configuration);
         var instrument = Configuration.BaseInstrument;
-        instrument.Disconnect();
+        if(instrument.IsConnected)
+        {
+            instrument.Disconnect();
+        }
 
         foreach (var sensor in Configuration.Sensors)
         {
-            sensor.Disconnect();
+            if(sensor.IsConnected)
+            {
+                sensor.Disconnect();
+            }
         }
     }
 
@@ -148,11 +154,17 @@ public class AIM
         var tasks = new List<Task>();
 
         var instrument = Configuration.BaseInstrument;
-        tasks.Add(instrument.DisconnectAsync());
+        if(instrument.IsConnected)
+        {
+            tasks.Add(instrument.DisconnectAsync());
+        }
 
         foreach (var sensor in Configuration.Sensors)
         {
-            tasks.Add(sensor.DisconnectAsync());
+            if(sensor.IsConnected)
+            {
+                tasks.Add(sensor.DisconnectAsync());
+            }
         }
 
         await Task.WhenAll(tasks.ToArray());

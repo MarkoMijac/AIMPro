@@ -48,10 +48,11 @@ public class AIModel : IAIModel
         }
     }
 
-    public void UnloadModel()
+    private void UnloadModel()
     {
         _model?.Dispose();
         _model = null;// Unload the model
+        Path = string.Empty;
     }
 
     public IPredictionResult Predict(MeasurementSession session)

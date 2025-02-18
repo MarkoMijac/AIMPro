@@ -49,8 +49,9 @@ public class AIMTests
         var aim = new AIM();
         var validConfiguration = CreateValidConfiguration();
         aim.LoadConfiguration(validConfiguration);
-
+        aim.Connect();
         var session = aim.GetData();
+        aim.Disconnect();
 
         // Act
         var prediction = aim.Predict(session);
@@ -67,7 +68,9 @@ public class AIMTests
         var validConfiguration = CreateValidConfiguration();
         aim.LoadConfiguration(validConfiguration);
 
+        await aim.ConnectAsync();
         var session = await aim.GetDataAsync();
+        await aim.DisconnectAsync();
 
         // Act
         var prediction = await aim.PredictAsync(session);

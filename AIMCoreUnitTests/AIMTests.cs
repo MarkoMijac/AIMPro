@@ -442,4 +442,116 @@ public class AIMTests
         // Assert
         Assert.NotNull(prediction);
     }
+
+    [Fact]
+    public void Disconnect_GivenAlreadyDisconnected_DoesNotAttemptDisconnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(false);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(false);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(false);
+        // Act
+        aim.Disconnect();
+
+        //Assert
+        A.CallTo(() => baseInstrument.Disconnect()).MustNotHaveHappened();
+        A.CallTo(() => sensor1.Disconnect()).MustNotHaveHappened();
+        A.CallTo(() => sensor2.Disconnect()).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public void Disconnect_GivenConnected_AttemptsDisconnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(true);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(true);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(true);
+        // Act
+        aim.Disconnect();
+
+        //Assert
+        A.CallTo(() => baseInstrument.Disconnect()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor1.Disconnect()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor2.Disconnect()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public void Disconnect_GivenConfigurationNotLoaded_ThrowsAIMException()
+    {
+        // Arrange
+        var aim = new AIM();
+
+        // Act & Assert
+        var exception = Assert.Throws<AIMNoConfigurationProvidedException>(() => aim.Disconnect());
+    }
+
+        [Fact]
+    public async void DisconnectAsync_GivenAlreadyDisconnected_DoesNotAttemptDisconnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(false);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(false);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(false);
+        // Act
+        await aim.DisconnectAsync();
+
+        //Assert
+        A.CallTo(() => baseInstrument.DisconnectAsync()).MustNotHaveHappened();
+        A.CallTo(() => sensor1.DisconnectAsync()).MustNotHaveHappened();
+        A.CallTo(() => sensor2.DisconnectAsync()).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async void DisconnectAsync_GivenConnected_AttemptsDisconnecting()
+    {
+        // Arrange
+        var aim = new AIM();
+        var validConfiguration = CreateValidConfiguration();
+        aim.LoadConfiguration(validConfiguration);
+
+        var baseInstrument = validConfiguration.BaseInstrument;
+        A.CallTo(() => baseInstrument.IsConnected).Returns(true);
+        var sensor1 = validConfiguration.Sensors[0];
+        A.CallTo(() => sensor1.IsConnected).Returns(true);  
+        var sensor2 = validConfiguration.Sensors[1];
+        A.CallTo(() => sensor2.IsConnected).Returns(true);
+        // Act
+        await aim.DisconnectAsync();
+
+        //Assert
+        A.CallTo(() => baseInstrument.DisconnectAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor1.DisconnectAsync()).MustHaveHappenedOnceExactly();
+        A.CallTo(() => sensor2.DisconnectAsync()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async void DisconnectAsync_GivenConfigurationNotLoaded_ThrowsAIMException()
+    {
+        // Arrange
+        var aim = new AIM();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<AIMNoConfigurationProvidedException>(() => aim.DisconnectAsync());
+    }
 }
