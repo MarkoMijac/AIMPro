@@ -31,13 +31,13 @@ public class ConfigurationRepository
         var uartStrategy = new UARTCommunication(portWrapper);
         var converter = readingConverterFactory.GetConverters().OfType<ScaleReadingConverter>().First();
 
-        var instrument = new Scale("SCALE", "GET_WEIGHT", uartStrategy, converter);
+        var instrument = new Scale("SCALE", uartStrategy, converter);
 
         var sensors = new List<ISensor>();
-        var gyroscope = new Gyroscope("GYROSCOPE", "GET_TILT", uartStrategy, converter);
-        var vibrationsensor = new Accelerometer("ACCELEROMETER", "GET_VIBR", uartStrategy, converter);
+        var gyroscope = new Gyroscope("GYROSCOPE", uartStrategy, converter);
+        //var vibrationsensor = new Accelerometer("ACCELEROMETER", "GET_VIBR", uartStrategy, converter);
         sensors.Add(gyroscope);
-        sensors.Add(vibrationsensor);
+        //sensors.Add(vibrationsensor);
 
         var aiModel = new AIModel("ScaleModel", @"/home/ubuntustudio/Documents/AimFiles/Models/ScaleModel.onnx");
 

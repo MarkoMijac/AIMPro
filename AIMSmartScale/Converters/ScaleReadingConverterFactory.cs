@@ -1,4 +1,3 @@
-using System;
 using AIMCore.Converters;
 
 namespace AIMSmartScale.Converters;
@@ -9,7 +8,7 @@ public class ScaleReadingConverterFactory : IReadingConverterFactory<string>
 
     public ScaleReadingConverterFactory()
     {
-        _converters = new List<IReadingConverter<string>> { new ScaleReadingConverter() };
+        _converters = [new ScaleReadingConverter(), new EnviromentalReadingConverter(), new GyroscopeReadingConverter()];
     }
 
     public List<IReadingConverter<string>> GetConverters()
